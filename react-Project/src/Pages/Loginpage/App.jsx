@@ -1,8 +1,10 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import EmailCard from "../../components/EmailCard";
 import OtpCard from "../../components/OtpCard";
-import "./login.css";
+import "../../login.css";
+
 
 function App() {
   return (
