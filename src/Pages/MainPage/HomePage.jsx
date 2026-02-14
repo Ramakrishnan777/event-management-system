@@ -1,19 +1,29 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./mainpage.css";
 
-export default function Main() {
+export default function HomePage() {
   const navigate = useNavigate();
 
-  // Check session on component mount
-  useEffect(() => {
+  // Handle ticket booking with authentication check
+  const handleGetTicket = (eventName) => {
     const user = localStorage.getItem("user");
     
     if (!user) {
-      // if no session, redirect to login page
+      alert("Please login to book tickets!");
       navigate("/login");
+      return;
     }
-  }, [navigate]);
+    
+    // User is logged in, proceed with booking
+    alert(`Booking ticket for: ${eventName}`);
+  };
+
+  //  Handle logout
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   return (
     <div>
@@ -26,13 +36,7 @@ export default function Main() {
             <div className="vibely-text">Vibely</div>
           </div>
           <button className="myeventsbtn" type="button">My Events</button>
-          <button
-            className="LogOut"
-            onClick={() => {
-              localStorage.clear();
-              navigate("/login");
-            }}
-          >
+          <button className="LogOut" onClick={handleLogout}>
             Log Out
           </button>
         </div>
@@ -44,8 +48,7 @@ export default function Main() {
           <form>
             <div className="search-box">
               <input type="text" placeholder=" 🔎︎ Search events" name="search" />
-
-              <select className="dropdown" name="category">
+        <select className="dropdown" name="category">
                 <option value="" disabled selected hidden>🧾 Category</option>
                 <option value="concert">Concert</option>
                 <option value="Foodfestival">Food Festival</option>
@@ -111,7 +114,12 @@ export default function Main() {
               <p className="event-location">📍 Chennai</p>
               <div className="cardfooter">
                 <span className="event-price">₹499</span>
-                <button className="ticket-btn">Get Ticket</button>
+                <button 
+                  className="ticket-btn" 
+                  onClick={() => handleGetTicket("Food Mood Reboot")}
+                >
+                  Get Ticket
+                </button>
               </div>
             </div>
           </div>
@@ -125,7 +133,12 @@ export default function Main() {
               <p className="event-location">📍 Bangalore</p>
               <div className="cardfooter">
                 <span className="event-price">₹999</span>
-                <button className="ticket-btn">Get Ticket</button>
+                <button 
+                  className="ticket-btn" 
+                  onClick={() => handleGetTicket("Auto Seat Conference")}
+                >
+                  Get Ticket
+                </button>
               </div>
             </div>
           </div>
@@ -139,7 +152,12 @@ export default function Main() {
               <p className="event-location">📍 Goa</p>
               <div className="cardfooter">
                 <span className="event-price">₹1499</span>
-                <button className="ticket-btn">Get Ticket</button>
+                <button 
+                  className="ticket-btn" 
+                  onClick={() => handleGetTicket("Music Festival Night")}
+                >
+                  Get Ticket
+                </button>
               </div>
             </div>
           </div>

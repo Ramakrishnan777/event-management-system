@@ -1,17 +1,24 @@
+
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import './login.css';
 
 function OtpCard() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const email = location.state?.email;
+  const location = useLocation();
+  
+  // get email from URL
+  const params = new URLSearchParams(location.search);
+  const email = params.get("email");
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [seconds, setSeconds] = useState(30);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // ⏳ countdown timer
   useEffect(() => {
     if (seconds === 0) return;
-
     const timer = setInterval(() => {
       setSeconds((s) => s - 1);
     }, 1000);
@@ -19,77 +26,76 @@ function OtpCard() {
     return () => clearInterval(timer);
   }, [seconds]);
 
+  // OTP input change
   const handleChange = (e, index) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-
     if (value && index < 3) {
       document.getElementById(`otp-${index + 1}`).focus();
     }
   };
 
+  // backspace navigation
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       document.getElementById(`otp-${index - 1}`).focus();
     }
   };
 
+  // ✅ verify OTP (Django handles session via cookies)
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const finalOtp = otp.join("");
 
     try {
+      setLoading(true);
+      setError(" ");
+
       const response = await fetch("http://localhost:8000/verify-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // ⭐ Django session cookie
         body: JSON.stringify({ email, otp: finalOtp }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      if (!response.ok) throw new Error("Invalid OTP");
 
-        // Save session details in localStorage
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
-
-        alert("Login success");
-
-        // Navigate to MainPage
-        navigate("/main");
-      }
-
+      alert("Login successful");
+      navigate("/"); // Django already set the session cookie
     } catch (err) {
-  console.log("Backend not ready:", err);
-
-  alert("DEV mode: temporary fake session")
-  localStorage.setItem("user", JSON.stringify({ email })); // store fake user
-  localStorage.setItem("token", "DEV_TOKEN");             // store fake token
-
-  alert("DEV mode: Navigating to Main Page");             // notify
-  navigate("/main");                                     // go to main page
-}
-
+      console.error(err);
+      setError("Invalid or expired OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // resend OTP
   const resendOtp = async () => {
     if (seconds > 0) return;
-
     setSeconds(30);
+    setError("");
 
-    await fetch("http://localhost:8000/resend-otp/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      await fetch("http://localhost:8000/resend-otp/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      setError("Failed to resend OTP");
+    }
   };
 
   return (
     <div className="outerlayer">
       <div id="otp-card">
-        <h1> Enter the OTP sent to your email</h1>
+        <h1>Enter the OTP sent to your email</h1>
+        <p>{email}</p>
+        
         <form onSubmit={handleSubmit}>
           <div id="otpbox">
             {otp.map((digit, i) => (
@@ -105,7 +111,9 @@ function OtpCard() {
               />
             ))}
           </div>
-          <button id="loginbtn">Login</button>
+          <button id="loginbtn" disabled={loading}>
+            {loading ? "Verifying..." : "Login"}
+          </button>
         </form>
         <p>
           Didn't receive OTP ?
@@ -114,12 +122,14 @@ function OtpCard() {
             className={`Resend ${seconds ? "disabled" : ""}`}
             onClick={resendOtp}
           >
-            {" "}Resend OTP (<span id="timer">{seconds}</span>s)
+            {" "}Resend OTP ({seconds}s)
           </span>
         </p>
+        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
       </div>
     </div>
   );
 }
+
 
 export default OtpCard;
