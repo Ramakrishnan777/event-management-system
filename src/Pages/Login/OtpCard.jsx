@@ -16,7 +16,7 @@ function OtpCard() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ⏳ countdown timer
+  //  countdown timer
   useEffect(() => {
     if (seconds === 0) return;
     const timer = setInterval(() => {
@@ -44,7 +44,7 @@ function OtpCard() {
     }
   };
 
-  // ✅ verify OTP (Django handles session via cookies)
+  //  verify OTP 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const finalOtp = otp.join("");
@@ -56,7 +56,7 @@ function OtpCard() {
       const response = await fetch("http://localhost:8000/verify-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ⭐ Django session cookie
+        credentials: "include", //  session cookie
         body: JSON.stringify({ email, otp: finalOtp }),
       });
 
