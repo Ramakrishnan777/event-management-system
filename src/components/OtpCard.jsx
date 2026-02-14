@@ -61,9 +61,17 @@ function OtpCard() {
         navigate("/main");
       }
 
-    } catch {
-      alert("DEV mode: backend not ready");
-    }
+    } catch (err) {
+  console.log("Backend not ready:", err);
+
+  alert("DEV mode: temporary fake session")
+  localStorage.setItem("user", JSON.stringify({ email })); // store fake user
+  localStorage.setItem("token", "DEV_TOKEN");             // store fake token
+
+  alert("DEV mode: Navigating to Main Page");             // notify
+  navigate("/main");                                     // go to main page
+}
+
   };
 
   const resendOtp = async () => {
