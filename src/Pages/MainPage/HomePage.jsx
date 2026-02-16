@@ -6,22 +6,32 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   // Handle ticket booking with authentication check
-  const handleGetTicket = (eventName) => {
-    const user = localStorage.getItem("user");
-    
-    if (!user) {
-      alert("Please login to book tickets!");
+  const handleGetTicket = async (eventName) => {
+    try {
+      const res = await fetch("http://localhost:8000/check-auth/", {
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        alert("Please login to book tickets!");
+        navigate("/login");
+        return; // stop here
+      }
+
+      // User is logged in
+      alert(`Booking ticket for: ${eventName}`);
+    } catch {
       navigate("/login");
-      return;
     }
-    
-    // User is logged in, proceed with booking
-    alert(`Booking ticket for: ${eventName}`);
   };
 
-  //  Handle logout
-  const handleLogout = () => {
-    localStorage.clear();
+  // Handle logout
+  const handleLogout = async () => {
+    await fetch("http://localhost:8000/logout/", {
+      method: "POST",
+      credentials: "include"
+    });
+
     navigate("/login");
   };
 
@@ -48,7 +58,8 @@ export default function HomePage() {
           <form>
             <div className="search-box">
               <input type="text" placeholder=" 🔎︎ Search events" name="search" />
-        <select className="dropdown" name="category">
+
+              <select className="dropdown" name="category">
                 <option value="" disabled selected hidden>🧾 Category</option>
                 <option value="concert">Concert</option>
                 <option value="Foodfestival">Food Festival</option>
@@ -114,8 +125,8 @@ export default function HomePage() {
               <p className="event-location">📍 Chennai</p>
               <div className="cardfooter">
                 <span className="event-price">₹499</span>
-                <button 
-                  className="ticket-btn" 
+                <button
+                  className="ticket-btn"
                   onClick={() => handleGetTicket("Food Mood Reboot")}
                 >
                   Get Ticket
@@ -133,8 +144,8 @@ export default function HomePage() {
               <p className="event-location">📍 Bangalore</p>
               <div className="cardfooter">
                 <span className="event-price">₹999</span>
-                <button 
-                  className="ticket-btn" 
+                <button
+                  className="ticket-btn"
                   onClick={() => handleGetTicket("Auto Seat Conference")}
                 >
                   Get Ticket
@@ -152,8 +163,8 @@ export default function HomePage() {
               <p className="event-location">📍 Goa</p>
               <div className="cardfooter">
                 <span className="event-price">₹1499</span>
-                <button 
-                  className="ticket-btn" 
+                <button
+                  className="ticket-btn"
                   onClick={() => handleGetTicket("Music Festival Night")}
                 >
                   Get Ticket
