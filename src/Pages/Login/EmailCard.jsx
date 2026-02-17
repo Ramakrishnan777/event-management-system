@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './login.css';
+import Spinner from '../../Components/Spinner/Spinner';
 
 function EmailCard() {
   const [email, setEmail] = useState("");
@@ -53,6 +54,8 @@ function EmailCard() {
 
   return (
     <div className="outerlayer">
+      {/*Spinner overlay*/}
+      {loading&&<Spinner />}
       <div id="login-card">
         <h1>Welcome back!</h1>
         <p>Enter your email to receive your OTP</p>
@@ -75,7 +78,7 @@ function EmailCard() {
           {error && <p style={{ color: "red" }}>{error}</p>}
 
           <button id="getotpbtn" disabled={!isValid || loading}>
-            {loading ? "Sending..." : "Get OTP"}
+             Get OTP
           </button>
         </form>
       </div>

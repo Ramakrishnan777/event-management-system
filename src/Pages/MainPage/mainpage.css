@@ -135,64 +135,78 @@ body {
     /* Remove default text color */
 }
 
-/*SEARCH BOX */
+/* ===== HERO SEARCH BAR ===== */
 .search-box {
-    display: flex;
-    padding-top: 50px;
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  max-width: 700px;
+  margin: 40px auto;
+
+  padding: 8px;
+
+  border-radius: 60px;
+
+  /* glass effect */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255,255,255,0.25);
+
+  box-shadow: 0 15px 40px rgba(0,0,0,0.45);
 }
 
-.herocontent input {
-    padding: 8px;
-    width: 330px;
-}
 
-.dropdown {
-    padding: 8px;
-    width: 200px;
-    
-  appearance: none;              /* Remove browser default style */
-  -webkit-appearance: none;/* same thing  but for chrome and safari*/
-  -moz-appearance: none;    /* same thing but for firefox*/
-  padding: 12px 40px 12px 14px;
+/* ===== INPUT ===== */
+.search-box input {
+  flex: 1;
 
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  cursor: pointer;
+  border: none;
   outline: none;
-   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-   background-repeat: no-repeat;
-   background-position:  right 14px center ;
-}
-.dropdown:focus {
-  border-color: #b86cff;
-  box-shadow: 0 0 0 2px rgba(184, 108, 255, 0.2);
-}
-.dropdown option{
-    color: #333;
-    background-color: #fff;
+  background: transparent;
+
+  padding: 18px 22px;
+
+  font-size: 17px;
+  color: white;
 }
 
+.search-box input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+
+/* ===== BUTTON ===== */
 .searchbtn {
-    padding: 8px;
-    width: 120px;
-    padding-left: 3px;
-    background: linear-gradient(135deg, #ff4ecd, #7b5cff);
-    box-shadow: 0 8px 20px rgba(123, 92, 255, 0.4);
-    color: #fff;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+
+  padding: 16px 38px;
+  font-size: 16px;
+  font-weight: 600;
+
+  border-radius: 50px;
+  color: white;
+
+  background: linear-gradient(135deg, #d946ef, #7c3aed);
+
+  transition: all 0.25s ease;
 }
 
+
+/* hover animation */
 .searchbtn:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: scale(1.07);
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.6);
 }
+
+
+/* click animation */
+.searchbtn:active {
+  transform: scale(0.97);
+}
+
 
 /* MY EVENTS BUTTON */
 .myeventsbtn {
@@ -444,21 +458,25 @@ footer p {
         font-size: 14px;
     }
 }
-/* searchbox and its elements*/
-@media (max-width:900px){
-    .search-box{
-        flex-wrap: wrap;
-        gap: 12px;
-        justify-content: center;
-    }
-    .herocontent input,.dropdown,.searchbtn{
-        width: 100%;
-        max-width: 380px;
-    }
-    .dropdown{
-        padding: 4px;
-    }
+/*  mobile screens */
+@media (max-width: 768px) {
+
+  .searchbar {
+    width: 90%;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 16px;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .search-btn {
+    width: 100%;
+  }
 }
+
 /* topbar and its elements*/
 @media (max-width:768px){
     .topbar{

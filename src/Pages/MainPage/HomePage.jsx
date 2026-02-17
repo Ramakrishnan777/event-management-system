@@ -1,12 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./mainpage.css";
+import { useState } from "react";
+import Spinner from "../../Components/Spinner/Spinner"; // ✅ spinner
 
 export default function HomePage() {
   const navigate = useNavigate();
 
-  // Handle ticket booking with authentication check
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ only for spinner
+
+  // 🔍 Search (unchanged)
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!search.trim()) return;
+    navigate(`/results?search=${encodeURIComponent(search)}`);
+  };
+
+  // 🎟 Get Ticket (ONLY spinner logic added)
   const handleGetTicket = async (eventName) => {
+    setLoading(true); // ✅ show spinner
+
     try {
       const res = await fetch("http://localhost:8000/check-auth/", {
         credentials: "include"
@@ -15,17 +29,18 @@ export default function HomePage() {
       if (!res.ok) {
         alert("Please login to book tickets!");
         navigate("/login");
-        return; // stop here
+        return;
       }
 
-      // User is logged in
       alert(`Booking ticket for: ${eventName}`);
     } catch {
       navigate("/login");
+    } finally {
+      setLoading(false); // ✅ hide spinner
     }
   };
 
-  // Handle logout
+  // 🚪 Logout (unchanged)
   const handleLogout = async () => {
     await fetch("http://localhost:8000/logout/", {
       method: "POST",
@@ -37,6 +52,10 @@ export default function HomePage() {
 
   return (
     <div>
+
+      {/* ✅ Spinner overlay ONLY when loading */}
+      {loading && <Spinner overlay />}
+
       <section className="hero">
         <div className="topbar">
           <div className="vibely-logo">
@@ -46,37 +65,21 @@ export default function HomePage() {
             <div className="vibely-text">Vibely</div>
           </div>
           <button className="myeventsbtn" type="button">My Events</button>
-          <button className="LogOut" onClick={handleLogout}>
-            Log Out
-          </button>
+          <button className="LogOut" onClick={handleLogout}>Log Out</button>
         </div>
 
         <div className="herocontent">
           <h1>Connecting the world</h1>
           <p>Discover events. Meet people. Create memories</p>
 
-          <form>
+          <form onSubmit={handleSearch}>
             <div className="search-box">
-              <input type="text" placeholder=" 🔎︎ Search events" name="search" />
-
-              <select className="dropdown" name="category">
-                <option value="" disabled selected hidden>🧾 Category</option>
-                <option value="concert">Concert</option>
-                <option value="Foodfestival">Food Festival</option>
-                <option value="conference">Conference</option>
-                <option value="sports">Sports</option>
-                <option value="tech">Tech</option>
-              </select>
-
-              <select className="dropdown" name="location">
-                <option value="" disabled selected hidden>📌 Location</option>
-                <option value="chennai">Ambathur</option>
-                <option value="bangalore">RedHills</option>
-                <option value="goa">Koyambedu</option>
-                <option value="mumbai">Porur</option>
-                <option value="delhi">Mylapore</option>
-              </select>
-
+              <input
+                type="text"
+                placeholder="Search events"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
               <button className="searchbtn" type="submit">Search</button>
             </div>
           </form>
@@ -198,6 +201,10 @@ export default function HomePage() {
           </div>
         </footer>
       </section>
+
     </div>
   );
 }
+
+
+

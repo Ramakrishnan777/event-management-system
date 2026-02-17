@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import './login.css';
+import Spinner from '../../Components/Spinner/Spinner';
 
 function OtpCard() {
   const navigate = useNavigate();
@@ -92,6 +93,7 @@ function OtpCard() {
 
   return (
     <div className="outerlayer">
+      {loading&&<Spinner/>} {/*full page overlay spinner*/}
       <div id="otp-card">
         <h1>Enter the OTP sent to your email</h1>
         <p>{email}</p>
