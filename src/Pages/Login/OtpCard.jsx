@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import './login.css';
-import Spinner from '../../Components/Spinner/Spinner';
+import ButtonSpinner from '../../Components/Spinner/ButtonSpinner';
 
 function OtpCard() {
   const navigate = useNavigate();
@@ -11,19 +10,18 @@ function OtpCard() {
   // get email from URL
   const params = new URLSearchParams(location.search);
   const email = params.get("email");
-
+  
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [seconds, setSeconds] = useState(30);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  //  countdown timer
+  // countdown timer
   useEffect(() => {
     if (seconds === 0) return;
     const timer = setInterval(() => {
       setSeconds((s) => s - 1);
     }, 1000);
-
     return () => clearInterval(timer);
   }, [seconds]);
 
@@ -45,26 +43,25 @@ function OtpCard() {
     }
   };
 
-  //  verify OTP 
+  // verify OTP
   const handleSubmit = async (e) => {
     e.preventDefault();
     const finalOtp = otp.join("");
-
     try {
       setLoading(true);
-      setError(" ");
+      setError("");
 
       const response = await fetch("http://localhost:8000/verify-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", //  session cookie
+        credentials: "include",
         body: JSON.stringify({ email, otp: finalOtp }),
       });
 
       if (!response.ok) throw new Error("Invalid OTP");
 
       alert("Login successful");
-      navigate("/"); // Django already set the session cookie
+      navigate("/");
     } catch (err) {
       console.error(err);
       setError("Invalid or expired OTP");
@@ -78,7 +75,6 @@ function OtpCard() {
     if (seconds > 0) return;
     setSeconds(30);
     setError("");
-
     try {
       await fetch("http://localhost:8000/resend-otp/", {
         method: "POST",
@@ -93,11 +89,11 @@ function OtpCard() {
 
   return (
     <div className="outerlayer">
-      {loading&&<Spinner/>} {/*full page overlay spinner*/}
-      <div id="otp-card">
-        <h1>Enter the OTP sent to your email</h1>
-        <p>{email}</p>
-        
+      <div id="login-card">
+        <h1>Enter OTP</h1>
+        <p>Enter the OTP sent to your email</p>
+        <p style={{ color: "#777" }}>{email}</p>
+
         <form onSubmit={handleSubmit}>
           <div id="otpbox">
             {otp.map((digit, i) => (
@@ -113,25 +109,28 @@ function OtpCard() {
               />
             ))}
           </div>
+          
           <button id="loginbtn" disabled={loading}>
+            {loading && <ButtonSpinner />}
             {loading ? "Verifying..." : "Login"}
           </button>
         </form>
+
         <p>
-          Didn't receive OTP ?
+          Didn't receive OTP?
           <span
             id="resendotp"
             className={`Resend ${seconds ? "disabled" : ""}`}
             onClick={resendOtp}
           >
-            {" "}Resend OTP ({seconds}s)
+            Resend OTP ({seconds}s)
           </span>
         </p>
+        
         {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
       </div>
     </div>
   );
 }
-
 
 export default OtpCard;

@@ -2,30 +2,27 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./mainpage.css";
 import { useState } from "react";
-import Spinner from "../../Components/Spinner/Spinner"; // ✅ spinner
+import ButtonSpinner from "../../Components/Spinner/ButtonSpinner";
 
 export default function HomePage() {
   const navigate = useNavigate();
-
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ only for spinner
+  const [loadingEvent, setLoadingEvent] = useState(null);
 
-  // 🔍 Search (unchanged)
   const handleSearch = (e) => {
     e.preventDefault();
     if (!search.trim()) return;
     navigate(`/results?search=${encodeURIComponent(search)}`);
   };
 
-  // 🎟 Get Ticket (ONLY spinner logic added)
+  // Get Ticket
   const handleGetTicket = async (eventName) => {
-    setLoading(true); // ✅ show spinner
-
+    setLoadingEvent(eventName);
     try {
       const res = await fetch("http://localhost:8000/check-auth/", {
         credentials: "include"
       });
-
+      
       if (!res.ok) {
         alert("Please login to book tickets!");
         navigate("/login");
@@ -36,26 +33,20 @@ export default function HomePage() {
     } catch {
       navigate("/login");
     } finally {
-      setLoading(false); // ✅ hide spinner
+      setLoadingEvent(null);
     }
   };
 
-  // 🚪 Logout (unchanged)
   const handleLogout = async () => {
     await fetch("http://localhost:8000/logout/", {
       method: "POST",
       credentials: "include"
     });
-
     navigate("/login");
   };
 
   return (
     <div>
-
-      {/* ✅ Spinner overlay ONLY when loading */}
-      {loading && <Spinner overlay />}
-
       <section className="hero">
         <div className="topbar">
           <div className="vibely-logo">
@@ -86,7 +77,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categories Section */}
       <section className="categories">
         <h2>Browse Events by Category</h2>
         <div className="category-container">
@@ -113,12 +103,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Event List Section */}
       <section className="eventlist">
         <h1 className="eventlist-title">Upcoming Events</h1>
         <p className="eventlist-subtitle">Hand-picked events you shouldn't miss</p>
 
         <div className="events">
+          {/* Event 1 */}
           <div className="eventcard">
             <img src="/images/foodevent.jpg" alt="" />
             <div className="eventcard-body">
@@ -131,13 +121,16 @@ export default function HomePage() {
                 <button
                   className="ticket-btn"
                   onClick={() => handleGetTicket("Food Mood Reboot")}
+                  disabled={loadingEvent === "Food Mood Reboot"}
                 >
-                  Get Ticket
+                  {loadingEvent === "Food Mood Reboot" && <ButtonSpinner />}
+                  {loadingEvent === "Food Mood Reboot" ? "Processing..." : "Get Ticket"}
                 </button>
               </div>
             </div>
           </div>
 
+          {/* Event 2 */}
           <div className="eventcard">
             <img src="/images/conferenceEvent.jpg" alt="" />
             <div className="eventcard-body">
@@ -150,13 +143,16 @@ export default function HomePage() {
                 <button
                   className="ticket-btn"
                   onClick={() => handleGetTicket("Auto Seat Conference")}
+                  disabled={loadingEvent === "Auto Seat Conference"}
                 >
-                  Get Ticket
+                  {loadingEvent === "Auto Seat Conference" && <ButtonSpinner />}
+                  {loadingEvent === "Auto Seat Conference" ? "Processing..." : "Get Ticket"}
                 </button>
               </div>
             </div>
           </div>
 
+          {/* Event 3 */}
           <div className="eventcard">
             <img src="/images/concertevent.jpg" alt="" />
             <div className="eventcard-body">
@@ -169,8 +165,10 @@ export default function HomePage() {
                 <button
                   className="ticket-btn"
                   onClick={() => handleGetTicket("Music Festival Night")}
+                  disabled={loadingEvent === "Music Festival Night"}
                 >
-                  Get Ticket
+                  {loadingEvent === "Music Festival Night" && <ButtonSpinner />}
+                  {loadingEvent === "Music Festival Night" ? "Processing..." : "Get Ticket"}
                 </button>
               </div>
             </div>
@@ -180,7 +178,6 @@ export default function HomePage() {
         <button className="alleventsbtn" type="button">View All Events</button>
       </section>
 
-      {/* Footer Section */}
       <section className="footersection">
         <h1>How it Works</h1>
         <footer>
@@ -201,10 +198,6 @@ export default function HomePage() {
           </div>
         </footer>
       </section>
-
     </div>
   );
 }
-
-
-

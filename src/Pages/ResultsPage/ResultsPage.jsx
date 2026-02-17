@@ -1,35 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import "../MainPage/mainpage.css";
 import Spinner from '../../Components/Spinner/Spinner';
 
 export default function ResultsPage() {
-  const navigate = useNavigate();
-
-  // get ?search=value from URL
   const [searchParams] = useSearchParams();
   const query = searchParams.get("search");
-
+  
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // runs when page loads
+  // Runs when page loads OR when query changes
   useEffect(() => {
-    fetchResults();
-  }, []);
+    if (query) {
+      fetchResults();
+    }
+  }, [query]); 
 
   const fetchResults = async () => {
     try {
-      const res = await fetch(
-        `http://localhost:8000/events?search=${query}`
-      );
-
+      const res = await fetch(`http://localhost:8000/events?search=${query}`);
       const data = await res.json();
       setEvents(data);
-
     } catch (err) {
       console.log(err);
-
     } finally {
       setLoading(false);
     }
@@ -40,42 +34,39 @@ export default function ResultsPage() {
   };
 
   return (
-    <section className="eventlist">
-      <h1 className="eventlist-title">Results for "{query}"</h1>
+    <section className="results-page">
+      <div className="container">
+        <h2>Results for "{query}"</h2>
 
-      
-      {loading && <Spinner />}
+        {loading && <Spinner />}
 
-      {!loading && events.length === 0 && <p>No events found</p>}
+        {!loading && events.length === 0 && <p>No events found</p>}
 
-      <div className="events">
-        {!loading &&
-          events.map((event) => (
-            <div key={event.id} className="eventcard">
-              <img src={event.image || "/images/conferenceEvent.jpg"} alt="" />
+        <div className="events">
+          {!loading &&
+            events.map((event) => (
+              <div key={event.id} className="eventcard">
+                <img src={event.image || "/images/conferenceEvent.jpg"} alt="" />
 
-              <div className="eventcard-body">
-                <span className="event-category">{event.category}</span>
+                <div className="eventcard-body">
+                  <span className="event-category">{event.category}</span>
+                  <h3 className="event-name">{event.name}</h3>
+                  <p className="event-date">📅 {event.date}</p>
+                  <p className="event-location">📍 {event.location}</p>
 
-                <h3 className="event-name">{event.name}</h3>
-
-                <p className="event-date">📅 {event.date}</p>
-
-                <p className="event-location">📍 {event.location}</p>
-
-                <div className="cardfooter">
-                  <span className="event-price">₹{event.price}</span>
-
-                  <button
-                    className="ticket-btn"
-                    onClick={() => handleGetTicket(event.name)}
-                  >
-                    Get Ticket
-                  </button>
+                  <div className="cardfooter">
+                    <span className="event-price">₹{event.price}</span>
+                    <button
+                      className="ticket-btn"
+                      onClick={() => handleGetTicket(event.name)}
+                    >
+                      Get Ticket
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+        </div>
       </div>
     </section>
   );
