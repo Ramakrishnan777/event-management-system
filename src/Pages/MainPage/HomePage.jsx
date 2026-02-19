@@ -19,7 +19,7 @@ export default function HomePage() {
   const handleGetTicket = async (eventName) => {
     setLoadingEvent(eventName);
     try {
-      const res = await fetch("http://localhost:8000/check-auth/", {
+       const res = await fetch("/api/check-auth/",  {
         credentials: "include"
       });
       
@@ -44,6 +44,9 @@ export default function HomePage() {
     });
     navigate("/login");
   };
+  const handleAllEvents = ()=>{
+    navigate("/eventlist")
+  }
 
   return (
     <div>
@@ -175,7 +178,10 @@ export default function HomePage() {
           </div>
         </div>
 
-        <button className="alleventsbtn" type="button">View All Events</button>
+        <button className="alleventsbtn"
+         type="button"
+          onClick={() => handleAllEvents()}>View All Events
+         </button>
       </section>
 
       <section className="footersection">

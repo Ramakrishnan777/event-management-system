@@ -14,6 +14,7 @@ export default function App() {
       <Route path="/login" element={<EmailCard />} />
       <Route path="/otp" element={<OtpCard />} />
      <Route path="/results" element={<ResultsPage />} />
+ 
     </Routes>
   );
 }

@@ -27,7 +27,7 @@ function EmailCard() {
       setLoading(true);
       setError("");
 
-      const res = await fetch("http://localhost:8000/send-otp/", {
+     const res = await fetch("/api/send-otp/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
