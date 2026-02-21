@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import "../MainPage/mainpage.css";
-import "./ResultPage.css";
+import "../../GlobalEvents.css";
 import Spinner from '../../Components/Spinner/Spinner';
 
 export default function ResultsPage() {
@@ -58,31 +57,23 @@ export default function ResultsPage() {
           Try: <code>"Food"</code>, <code>"Chennai"</code>, or <code>"Conference"</code>
         </p>
       ) : (
-        <div className="results-grid">
-          {events.map((event) => (
-            <div key={event.id} className="eventcard">
-              <img 
-                src={event.image || "/images/conferenceEvent.jpg"} 
-                alt={event.title} 
-              />
-              <div className="eventcard-body">
-                <span className="event-category">{event.category}</span>
-                <h3 className="event-name">{event.title}</h3>
-                <p className="event-date">📅 {event.date} · {event.time}</p>
-                <p className="event-location">📍 {event.location}</p>
-                <div className="cardfooter">
-                  <span className="event-price">₹{event.price}</span>
-                  <button 
-                    className="ticket-btn"
-                    onClick={() => alert(`Booking: ${event.title}`)}
-                  >
-                    Get Ticket
-                  </button>
-                </div>
+         <div className="events-grid-container">
+        {events.map((event) => (
+          <div key={event.id} className="reusable-event-card">
+            <img src={event.image || "/images/conferenceEvent.jpg"} alt={event.title} />
+            <div className="card-body">
+              <span className="event-category">{event.category}</span>
+              <h3 className="event-title">{event.title}</h3>
+              <div className="event-info">📅 {event.date} · {event.time}</div>
+              <div className="event-info">📍 {event.location}</div>
+              <div className="card-footer">
+                <span className="event-price">{event.price}</span>
+                <button className="gradient-ticket-btn">Get Ticket</button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
       )}
     </section>
   );
