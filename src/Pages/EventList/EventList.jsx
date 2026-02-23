@@ -1,11 +1,16 @@
 import {useState,useEffect} from "react";
 import "../../GlobalEvents.css";
 import "./EventList.css"
+import ButtonSpinner from "../../Components/Spinner/ButtonSpinner";
+import { useNavigate } from "react-router-dom"
 
 export default function EventsPage() {
   const [search,setSearch]=useState("");
   const [currentpage,setCurrentPage]=useState(1);
   const [events,setEvents]=useState([]);
+   const [loadingEvent, setLoadingEvent] = useState(null);
+   const navigate=useNavigate();
+  
   const eventsPerPage=6;
 
   // fetch data
@@ -29,14 +34,33 @@ export default function EventsPage() {
   }, [search]);
 
   //search logic
-  const filterEvents=events.filter((events)=>{
+  const filterEvents=events.filter((event)=>{
     const text=search.toLowerCase();
     return(
-      events.title.toLowerCase().includes(text)||
-      events.category.toLowerCase().includes(text)||
-      events.location.toLowerCase().includes(text)
+      event.title.toLowerCase().includes(text)||
+      event.category.toLowerCase().includes(text)||
+      event.location.toLowerCase().includes(text)
     )
   })
+  const handleGetTicket = async (eventName)=>{
+    setLoadingEvent(eventName)//start loading
+    try{
+    const res= await fetch("/api/check-auth/",{
+      credentials: "include"
+    });
+    if(!res.ok){
+       alert("Please login to book tickets!");
+        navigate("/login");
+        return;
+    }
+      alert(`Booking ticket for: ${eventName}`);
+  }catch{
+        navigate("/login");
+
+  }finally {
+      setLoadingEvent(null);
+    }
+  }
 
   //pagination math
   const lastIndex=currentpage*eventsPerPage;
@@ -71,7 +95,10 @@ export default function EventsPage() {
                 <div className="event-info">📍 {event.location}</div>
                 <div className="card-footer">
                   <span className="event-price">{event.price}</span>
-                  <button className="gradient-ticket-btn">Get Ticket</button>
+                  <button className="gradient-ticket-btn"
+                  onClick={()=>handleGetTicket(event.title)}
+                  disabled={loadingEvent===event.title}
+                  >{loadingEvent===event.title?<ButtonSpinner/ >:"Get Ticket"}</button>
                 </div>
               </div>
             </div>
