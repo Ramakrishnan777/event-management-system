@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useNavigate } from "react-router-dom";
 import "./mainpage.css";
 import { useState } from "react";
@@ -47,6 +47,13 @@ export default function HomePage() {
   const handleAllEvents = ()=>{
     navigate("/eventlist")
   }
+  const handleMyEvents = () =>{
+    navigate("/myevents")
+  }
+  const handleCategoryClick= (category) =>{
+    navigate(`/results/${category}`)
+
+  }
 
   return (
     <div>
@@ -58,7 +65,7 @@ export default function HomePage() {
             </div>
             <div className="vibely-text">Vibely</div>
           </div>
-          <button className="myeventsbtn" type="button">My Events</button>
+          <button className="myeventsbtn" type="button" onClick={handleMyEvents}>My Events</button>
           <button className="LogOut" onClick={handleLogout}>Log Out</button>
         </div>
 
@@ -83,23 +90,33 @@ export default function HomePage() {
       <section className="categories">
         <h2>Browse Events by Category</h2>
         <div className="category-container">
-          <div className="category-card">
+          <div className="category-card"
+         onClick={() => handleCategoryClick("concerts")}
+          >
             <img src="/images/concert category.png" alt="Concerts" />
             <p>Concerts</p>
           </div>
-          <div className="category-card">
+           <div className="category-card"
+         onClick={() => handleCategoryClick("foodfestival")}
+          >
             <img src="/images/food category.png" alt="Food Festival" />
             <p>Food Festival</p>
           </div>
-          <div className="category-card">
+          <div className="category-card"
+          onClick={()=>handleCategoryClick("conference")}
+          >
             <img src="/images/conference category.png" alt="Conference" />
             <p>Conference</p>
           </div>
-          <div className="category-card">
+          <div className="category-card"
+          onClick={()=>handleCategoryClick("sports")}
+          >
             <img src="/images/Sports category.png" alt="Sports" />
             <p>Sports</p>
           </div>
-          <div className="category-card">
+        <div className="category-card"
+          onClick={()=>handleCategoryClick("tech")}
+          >
             <img src="/images/techcategory.png" alt="Tech" />
             <p>Tech</p>
           </div>

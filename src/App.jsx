@@ -6,6 +6,7 @@ import EmailCard from "./Pages/Login/EmailCard";
 import OtpCard from "./Pages/Login/OtpCard";
 import ResultsPage from "./Pages/ResultsPage/ResultsPage";
 import EventList from "./Pages/EventList/EventList"
+import MyEvents from "./Pages/MyEvents/MyEvents";
 
 export default function App() {
   return (
@@ -15,7 +16,8 @@ export default function App() {
       <Route path="/otp" element={<OtpCard />} />
      <Route path="/results" element={<ResultsPage />} />
      <Route path="/eventlist" element={<EventList />}/>
- 
+     <Route path="/myevents" element={<MyEvents/>}/>
+     <Route path="/results/:category" element={<ResultsPage />} />
     </Routes>
   );
 }

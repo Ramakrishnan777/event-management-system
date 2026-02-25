@@ -1,27 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import "../../GlobalEvents.css";
 import Spinner from '../../Components/Spinner/Spinner';
 
 export default function ResultsPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("search") || "";
+  const { category }=useParams();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!query.trim()) {
-      setEvents([]);
-      setLoading(false);
-      return;
-    }
 
     const fetchResults = async () => {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(`/api/search/?q=${encodeURIComponent(query)}`);
+        //nothing selected
+        if (!query && !category) {
+         setEvents([]);
+         return;
+         }
+    let res;
+    //category
+    if(category){
+      res=await fetch(`/api/events/?category=${category}`)
+    }
+    //search
+    else{
+      res=await fetch(`/api/search/?q=${encodeURIComponent(query)}`)
+    }
+  
         
         if (!res.ok) {
           throw new Error(`HTTP ${res.status} - ${res.statusText}`);
@@ -39,7 +49,7 @@ export default function ResultsPage() {
     };
 
     fetchResults();
-  }, [query]);
+  }, [query,category]);
 
   
   if (loading) return <Spinner />;
@@ -49,11 +59,13 @@ export default function ResultsPage() {
 
   return (
     <section className="results-page">
-      <h1 className="results-title">Results for "{query}"</h1>
+   <h1 className="results-title">
+  {category ? `${category} Events` : `Results for "${query}"`}
+</h1>
       
       {events.length === 0 ? (
         <p style={{ textAlign: 'center', color: '#777', padding: '40px' }}>
-          🔍 No events found matching <strong>"{query}"</strong>. <br />
+          🔍 No events found matching <strong>   {category ? `${category} ` : ` "${query}"`}</strong>. <br />
           Try: <code>"Food"</code>, <code>"Chennai"</code>, or <code>"Conference"</code>
         </p>
       ) : (
