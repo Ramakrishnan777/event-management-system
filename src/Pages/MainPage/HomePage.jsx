@@ -156,7 +156,7 @@ const fetchNearestEvents = async () => {
   <div className="events">
    
   {events.map((event) => (
-    <div className="eventcard" key={event.title}>
+    <div className="eventcard" key={`${event.title}-${event.eventDate}-${event.time}`}>
       <img src={event.image} alt={event.title} />
 
       <div className="eventcard-body">
