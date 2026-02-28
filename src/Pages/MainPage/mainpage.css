@@ -1,13 +1,15 @@
 * {  
-  margin: 0;
-  padding: 0;
+
   box-sizing: border-box;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
 
 /* Body background */
 body {
-    background-color: lightgray;
+ 
+      background: linear-gradient(135deg, #f6f3ff, #eef7ff);
+  min-height: 100vh;
+   
 }
 
 /* HERO SECTION */
@@ -264,7 +266,7 @@ body {
 }
 .category-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 .category-card:hover p{
     color: purple;
@@ -318,7 +320,8 @@ body {
 
 .eventcard:hover {
     transform: translateY(-6px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.17);
+
+     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .eventcard img {
@@ -553,4 +556,12 @@ font-size: 26px;
         width: auto;
         height: auto;
     }
+}
+
+/* error text */
+.error-text{
+    margin-left: 220px;
+    color: red;
+    font-size:x-large;
+    margin-top: 20px;
 }

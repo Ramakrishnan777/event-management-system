@@ -1,23 +1,46 @@
 
 import { useNavigate } from "react-router-dom";
 import "./mainpage.css";
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import ButtonSpinner from "../../Components/Spinner/ButtonSpinner";
+
 
 export default function HomePage() {
   const navigate = useNavigate();
+    const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
-  const [loadingEvent, setLoadingEvent] = useState(null);
+  const [loading, setLoading] = useState(null);
+    const [error, setError] = useState("");
+ useEffect(() => {
+  fetchNearestEvents();
+}, []);
+
+const fetchNearestEvents = async () => {
+  try {
+    setLoading(true);
+    setError("")
+    const res = await fetch("/api/events/nearest");
+
+    const data = await res.json();
+
+    setEvents(data);   
+  } catch (err) {
+    setError("Failed to load events");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (!search.trim()) return;
     navigate(`/results?search=${encodeURIComponent(search)}`);
   };
+  //
 
   // Get Ticket
   const handleGetTicket = async (eventName) => {
-    setLoadingEvent(eventName);
+    setLoading(eventName);
     try {
        const res = await fetch("/api/check-auth/",  {
         credentials: "include"
@@ -29,11 +52,11 @@ export default function HomePage() {
         return;
       }
 
-      alert(`Booking ticket for: ${eventName}`);
+     
     } catch {
       navigate("/login");
     } finally {
-      setLoadingEvent(null);
+      setLoading(null);
     }
   };
 
@@ -44,12 +67,15 @@ export default function HomePage() {
     });
     navigate("/login");
   };
+
   const handleAllEvents = ()=>{
     navigate("/eventlist")
   }
+
   const handleMyEvents = () =>{
     navigate("/myevents")
   }
+
   const handleCategoryClick= (category) =>{
     navigate(`/results/${category}`)
 
@@ -126,75 +152,44 @@ export default function HomePage() {
       <section className="eventlist">
         <h1 className="eventlist-title">Upcoming Events</h1>
         <p className="eventlist-subtitle">Hand-picked events you shouldn't miss</p>
+{error && <p className="error-text">{error}</p>}
+  <div className="events">
+   
+  {events.map((event) => (
+    <div className="eventcard" key={event.title}>
+      <img src={event.image} alt={event.title} />
 
-        <div className="events">
-          {/* Event 1 */}
-          <div className="eventcard">
-            <img src="/images/foodevent.jpg" alt="" />
-            <div className="eventcard-body">
-              <span className="event-category">Food Festival</span>
-              <h3 className="event-name">Food Mood Reboot</h3>
-              <p className="event-date">📅 2026-02-07 · 10:00 AM</p>
-              <p className="event-location">📍 Chennai</p>
-              <div className="cardfooter">
-                <span className="event-price">₹499</span>
-                <button
-                  className="ticket-btn"
-                  onClick={() => handleGetTicket("Food Mood Reboot")}
-                  disabled={loadingEvent === "Food Mood Reboot"}
-                >
-                  {loadingEvent === "Food Mood Reboot" && <ButtonSpinner />}
-                  {loadingEvent === "Food Mood Reboot" ? "Processing..." : "Get Ticket"}
-                </button>
-              </div>
-            </div>
-          </div>
+      <div className="eventcard-body">
+        <span className="event-category">{event.category}</span>
 
-          {/* Event 2 */}
-          <div className="eventcard">
-            <img src="/images/conferenceEvent.jpg" alt="" />
-            <div className="eventcard-body">
-              <span className="event-category">Conference</span>
-              <h3 className="event-name">Auto Seat Conference</h3>
-              <p className="event-date">📅 2026-02-08 · 9:00 AM</p>
-              <p className="event-location">📍 Bangalore</p>
-              <div className="cardfooter">
-                <span className="event-price">₹999</span>
-                <button
-                  className="ticket-btn"
-                  onClick={() => handleGetTicket("Auto Seat Conference")}
-                  disabled={loadingEvent === "Auto Seat Conference"}
-                >
-                  {loadingEvent === "Auto Seat Conference" && <ButtonSpinner />}
-                  {loadingEvent === "Auto Seat Conference" ? "Processing..." : "Get Ticket"}
-                </button>
-              </div>
-            </div>
-          </div>
+        <h3 className="event-name">{event.title}</h3>
 
-          {/* Event 3 */}
-          <div className="eventcard">
-            <img src="/images/concertevent.jpg" alt="" />
-            <div className="eventcard-body">
-              <span className="event-category">Fashion</span>
-              <h3 className="event-name">Music Festival Night</h3>
-              <p className="event-date">📅 2026-02-09 · 6:00 PM</p>
-              <p className="event-location">📍 Goa</p>
-              <div className="cardfooter">
-                <span className="event-price">₹1499</span>
-                <button
-                  className="ticket-btn"
-                  onClick={() => handleGetTicket("Music Festival Night")}
-                  disabled={loadingEvent === "Music Festival Night"}
-                >
-                  {loadingEvent === "Music Festival Night" && <ButtonSpinner />}
-                  {loadingEvent === "Music Festival Night" ? "Processing..." : "Get Ticket"}
-                </button>
-              </div>
-            </div>
-          </div>
+        <p className="event-date">
+          📅 {event.eventDate} · {event.time}
+        </p>
+
+        <p className="event-location">
+          📍 {event.location}
+        </p>
+
+        <div className="cardfooter">
+          <span className="event-price">₹{event.price}</span>
+
+          <button
+            className="ticket-btn"
+            onClick={() => handleGetTicket(event.title)}
+            disabled={loading === event.title}
+          >
+            {loading === event.title && <ButtonSpinner />}
+            {loading === event.title
+              ? "Processing..."
+              : "Get Ticket"}
+          </button>
         </div>
-
+      </div>
+    </div>
+  ))}
+</div>
         <button className="alleventsbtn"
          type="button"
           onClick={() => handleAllEvents()}>View All Events
