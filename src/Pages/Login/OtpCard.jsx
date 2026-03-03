@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import './login.css';
 import ButtonSpinner from '../../Components/Spinner/ButtonSpinner';
+import { toast } from 'react-toastify'; 
 
 function OtpCard() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ function OtpCard() {
 
       if (!response.ok) throw new Error("Invalid OTP");
 
-      alert("Login successful");
+      toast.success("Login successful"); 
       navigate("/");
     } catch (err) {
       console.error(err);

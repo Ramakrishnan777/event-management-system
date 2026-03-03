@@ -8,7 +8,6 @@
     font-family: 'Inter', sans-serif;
 }
 
-
 /* OUTER LAYER */
 
 .outerlayer {
@@ -16,7 +15,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: lightgray;
+       
+      background: linear-gradient(135deg, #f6f3ff, #eef7ff);
     padding: 15px;
 }
 

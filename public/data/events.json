@@ -1,0 +1,265 @@
+[
+  {
+    "title": "Modern Art Expo",
+    "category": "Art",
+    "date": "2026-03-12",
+    "registrationLastDate": "2026-03-09",
+    "time": "11:00 AM",
+    "location": "Nungambakkam, Chennai",
+    "price": 299,
+    "image": "/images/artevent1.jpg",
+    "organizer": "Chennai Art Circle",
+    "description": "Explore modern paintings, sculptures, and creative installations by emerging artists.",
+    "tickets": {
+      "total": 200,
+      "booked": 120,
+      "available": 80
+    },
+    "agenda": [
+      { "time": "10:00 AM", "title": "Opening Ceremony" },
+      { "time": "11:00 AM", "title": "Gallery Tour" },
+      { "time": "01:00 PM", "title": "Live Painting" },
+      { "time": "03:00 PM", "title": "Artist Meet" }
+    ]
+  },
+
+  {
+    "title": "Artisan Craft Fair",
+    "category": "Art",
+    "date": "2026-03-15",
+    "registrationLastDate": "2026-03-12",
+    "time": "10:00 AM",
+    "location": "Adyar, Chennai",
+    "price": 350,
+    "image": "/images/artevent2.jpg",
+    "organizer": "Craft India",
+    "description": "Handmade crafts, DIY workshops, and local artisan stalls.",
+    "tickets": {
+      "total": 150,
+      "booked": 60,
+      "available": 90
+    },
+    "agenda": [
+      { "time": "10:00 AM", "title": "Fair Opening" },
+      { "time": "11:30 AM", "title": "DIY Workshop" },
+      { "time": "02:00 PM", "title": "Live Craft Demo" },
+      { "time": "05:00 PM", "title": "Closing Ceremony" }
+    ]
+  },
+
+  {
+    "title": "Rock Night Concert",
+    "category": "Music",
+    "date": "2026-03-18",
+    "registrationLastDate": "2026-03-14",
+    "time": "07:30 PM",
+    "location": "Velachery, Chennai",
+    "price": 999,
+    "image": "/images/concertevent.jpg",
+    "organizer": "Live Nation",
+    "description": "High-energy live rock music concert with top bands.",
+    "tickets": {
+      "total": 500,
+      "booked": 420,
+      "available": 80
+    },
+    "agenda": [
+      { "time": "06:30 PM", "title": "Entry & Warmup DJ" },
+      { "time": "07:30 PM", "title": "Opening Band" },
+      { "time": "08:30 PM", "title": "Main Performance" },
+      { "time": "10:30 PM", "title": "After Party" }
+    ]
+  },
+
+  {
+    "title": "Indie Music Fest",
+    "category": "Music",
+    "date": "2026-03-20",
+    "registrationLastDate": "2026-03-17",
+    "time": "06:00 PM",
+    "location": "OMR, Chennai",
+    "price": 799,
+    "image": "/images/concertevent2.jpg",
+    "organizer": "Indie Beats",
+    "description": "A night of indie bands and unplugged sessions.",
+    "tickets": {
+      "total": 350,
+      "booked": 210,
+      "available": 140
+    },
+    "agenda": [
+      { "time": "06:00 PM", "title": "Warmup Acts" },
+      { "time": "07:00 PM", "title": "Live Bands" },
+      { "time": "09:00 PM", "title": "Acoustic Set" },
+      { "time": "10:00 PM", "title": "Jam Session" }
+    ]
+  },
+
+  {
+    "title": "Tech Conference 2026",
+    "category": "Technology",
+    "date": "2026-03-22",
+    "registrationLastDate": "2026-03-18",
+    "time": "09:00 AM",
+    "location": "Guindy, Chennai",
+    "price": 1499,
+    "image": "/images/conferenceEvent.jpg",
+    "organizer": "Tech World India",
+    "description": "Talks on AI, Cloud, and Web Development trends.",
+    "tickets": {
+      "total": 300,
+      "booked": 180,
+      "available": 120
+    },
+    "agenda": [
+      { "time": "09:00 AM", "title": "Keynote Speech" },
+      { "time": "10:30 AM", "title": "Tech Talks" },
+      { "time": "01:00 PM", "title": "Networking Lunch" },
+      { "time": "03:00 PM", "title": "Panel Discussion" }
+    ]
+  },
+
+  {
+    "title": "Startup Expo",
+    "category": "Technology",
+    "date": "2026-03-24",
+    "registrationLastDate": "2026-03-20",
+    "time": "10:00 AM",
+    "location": "Anna Nagar, Chennai",
+    "price": 999,
+    "image": "/images/conferenceEvent2.jpg",
+    "organizer": "Startup Hub",
+    "description": "Meet founders, investors, and new startups.",
+    "tickets": {
+      "total": 250,
+      "booked": 130,
+      "available": 120
+    },
+    "agenda": [
+      { "time": "10:00 AM", "title": "Startup Showcase" },
+      { "time": "12:00 PM", "title": "Pitch Session" },
+      { "time": "02:00 PM", "title": "Mentor Talks" },
+      { "time": "04:00 PM", "title": "Networking" }
+    ]
+  },
+
+  {
+    "title": "Food Festival",
+    "category": "Food",
+    "date": "2026-03-26",
+    "registrationLastDate": "2026-03-23",
+    "time": "12:00 PM",
+    "location": "Besant Nagar, Chennai",
+    "price": 199,
+    "image": "/images/foodevent.jpg",
+    "organizer": "Taste India",
+    "description": "Street food, desserts, and live cooking shows.",
+    "tickets": {
+      "total": 400,
+      "booked": 150,
+      "available": 250
+    },
+    "agenda": [
+      { "time": "12:00 PM", "title": "Food Stalls Open" },
+      { "time": "01:30 PM", "title": "Chef Demo" },
+      { "time": "03:00 PM", "title": "Tasting Session" },
+      { "time": "06:00 PM", "title": "Closing" }
+    ]
+  },
+
+  {
+    "title": "City Cycling Marathon",
+    "category": "Sports",
+    "date": "2026-03-28",
+    "registrationLastDate": "2026-03-24",
+    "time": "05:30 AM",
+    "location": "ECR, Chennai",
+    "price": 299,
+    "image": "/images/sportsevent1.jpg",
+    "organizer": "Chennai Riders Club",
+    "description": "An early-morning cycling marathon along the scenic East Coast Road.",
+    "tickets": {
+      "total": 500,
+      "booked": 350,
+      "available": 150
+    },
+    "agenda": [
+      { "time": "05:30 AM", "title": "Warm-up & Check-in" },
+      { "time": "06:00 AM", "title": "Race Start" },
+      { "time": "08:00 AM", "title": "Finish Line" },
+      { "time": "08:30 AM", "title": "Medal Distribution" }
+    ]
+  },
+
+  {
+    "title": "Chennai Night Marathon",
+    "category": "Sports",
+    "date": "2026-03-30",
+    "registrationLastDate": "2026-03-26",
+    "time": "06:00 PM",
+    "location": "Marina Beach Road, Chennai",
+    "price": 499,
+    "image": "/images/sportsevent2.jpg",
+    "organizer": "Chennai Runners Club",
+    "description": "Run under the city lights with cheering crowds and scenic coastal views.",
+    "tickets": {
+      "total": 600,
+      "booked": 420,
+      "available": 180
+    },
+    "agenda": [
+      { "time": "05:00 PM", "title": "Check-in & Bib Collection" },
+      { "time": "05:30 PM", "title": "Warm-up Session" },
+      { "time": "06:00 PM", "title": "Race Start" },
+      { "time": "08:00 PM", "title": "Closing Ceremony" }
+    ]
+  },
+
+  {
+    "title": "AI & Web Dev Meetup",
+    "category": "Technology",
+    "date": "2026-04-02",
+    "registrationLastDate": "2026-03-30",
+    "time": "10:00 AM",
+    "location": "OMR Tech Park, Chennai",
+    "price": 399,
+    "image": "/images/techevent1.jpg",
+    "organizer": "Chennai Dev Community",
+    "description": "Community meetup on AI, modern web technologies, and networking.",
+    "tickets": {
+      "total": 180,
+      "booked": 75,
+      "available": 105
+    },
+    "agenda": [
+      { "time": "10:00 AM", "title": "Welcome & Registration" },
+      { "time": "10:30 AM", "title": "AI Trends Talk" },
+      { "time": "12:00 PM", "title": "Web Development Session" },
+      { "time": "02:00 PM", "title": "Networking & Q&A" }
+    ]
+  },
+
+  {
+    "title": "React Hands-on Workshop",
+    "category": "Workshop",
+    "date": "2026-04-08",
+    "registrationLastDate": "2026-04-05",
+    "time": "10:00 AM",
+    "location": "T Nagar, Chennai",
+    "price": 699,
+    "image": "/images/workshop1.jpg",
+    "organizer": "Frontend Academy",
+    "description": "Hands-on React workshop covering hooks, routing, APIs, and TypeScript.",
+    "tickets": {
+      "total": 120,
+      "booked": 45,
+      "available": 75
+    },
+    "agenda": [
+      { "time": "10:00 AM", "title": "React Basics & Setup" },
+      { "time": "11:30 AM", "title": "Hooks Deep Dive" },
+      { "time": "01:30 PM", "title": "API Integration" },
+      { "time": "03:30 PM", "title": "Mini Project Build" }
+    ]
+  }
+]

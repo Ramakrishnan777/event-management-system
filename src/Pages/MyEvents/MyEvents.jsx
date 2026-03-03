@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import "../../GlobalEvents.css";
+import "../../index.css";
 import Spinner from "../../Components/Spinner/Spinner";
 import { useNavigate } from "react-router-dom";
 import "./MyEvents.css"
+import { toast } from 'react-toastify'; 
 
 const MyEvents = () => {
   const [events, setEvents] = useState([]);
@@ -20,13 +21,10 @@ const MyEvents = () => {
       setLoading(true);
       setError("");
 
-      const res = await fetch("/api/myevents",{
-        method:"GET",
-        credentials:"include"
-      });
+      const res = await fetch("/data/events.json");
         //session expired
       if (res.status === 401) {
-      alert("Session expired. Please login again.");
+      toast.error("Session expired. Please login again."); 
       navigate("/login");
       return;
     }
@@ -45,7 +43,30 @@ const MyEvents = () => {
       setLoading(false);
     }
   };
+    const handleViewDeatils = async (eventTitle) => {
+  try {
+    const res = await fetch("/api/check-auth/", {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json" 
+      },
+      credentials: "include",
+      body: JSON.stringify({ eventTitle })
+    });
 
+    if (!res.ok) {
+      toast.error("Please login to View details!");
+        navigate("/login");
+  
+      return;
+    }
+
+    navigate(`/myevents/${encodeURIComponent(eventTitle)}`);
+
+  } catch (e) {
+    console.log(e.message);
+  }
+};
   if (loading) return <Spinner />;
 
   if (error)
@@ -60,7 +81,7 @@ return (
     {events.length === 0 ? (
       <p style={{ textAlign: "center", color: "#777", padding: "40px" }}>
         <strong>
-          You haven’t registered for any events yet. Explore events and book
+          You haven't registered for any events yet. Explore events and book
           your first one!
         </strong>
         <br />
@@ -84,7 +105,7 @@ return (
 
         <div className="events-grid-container">
           {events.map((event) => (
-            <div key={event.id} className="reusable-event-card">
+            <div key={`${event.title}-${event.date}-${event.time}`} className="reusable-event-card">
               <img
                 src={event.image || "/images/conferenceEvent.jpg"}
                 alt={event.title}
@@ -106,6 +127,7 @@ return (
 
                   <button
                     className="viewdetailsbtn"
+                    onClick={()=>handleViewDeatils(event.title)}
              
                   >
                     View Details

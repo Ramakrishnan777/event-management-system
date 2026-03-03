@@ -1,5 +1,4 @@
 
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/MainPage/HomePage";
 import EmailCard from "./Pages/Login/EmailCard";
@@ -7,9 +6,13 @@ import OtpCard from "./Pages/Login/OtpCard";
 import ResultsPage from "./Pages/ResultsPage/ResultsPage";
 import EventList from "./Pages/EventList/EventList"
 import MyEvents from "./Pages/MyEvents/MyEvents";
+import EventDetails from "./Pages/EventDetails/EventDetails";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   return (
+    <>
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<EmailCard />} />
@@ -18,6 +21,14 @@ export default function App() {
      <Route path="/eventlist" element={<EventList />}/>
      <Route path="/myevents" element={<MyEvents/>}/>
      <Route path="/results/:category" element={<ResultsPage />} />
-    </Routes>
+      <Route path="/event/:title" element={<EventDetails mode="register"/>} />
+        <Route path="/myevents/:title" element={<EventDetails mode="cancel"/>} />
+      </Routes>
+         <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        theme="light"
+      />
+      </>
   );
 }
