@@ -70,11 +70,14 @@ export default function ResultsPage() {
         credentials: "include",
         body: JSON.stringify({ eventTitle })
       });
+            if (res.status === 401) {
+            toast.error("Session expired. Please login again."); 
+            navigate("/login");
+            return;
+          }
 
-      if (!res.ok) {
-        toast.error("Please login to book tickets!");
-        navigate("/login");
-        return;                  
+          if (!res.ok) {
+        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
       }
 
       navigate(`/event/${encodeURIComponent(eventTitle)}`);

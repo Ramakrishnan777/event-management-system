@@ -70,12 +70,17 @@ export default function HomePage() {
 
         body: JSON.stringify({ eventTitle }),
       });
+            if (res.status === 401) {
+      toast.error("Session expired. Please login again."); 
+      navigate("/login");
+      return;
+    }
+
 
       if (!res.ok) {
-        toast.error("Please login to book tickets!");
-        navigate("/login");
-        return;
+        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
       }
+
     } catch (e) {
       console.log(e.message);
     } finally {

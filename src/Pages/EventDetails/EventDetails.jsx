@@ -28,46 +28,42 @@ const EventDetails = ({mode}) => {
     useEffect(() => {
       fetchEventDetails();
     }, [title]);
-  
-    const fetchEventDetails = async () => {
-      try {
-        setLoading(true);
-        setError("");
-  
-        const res = await fetch("/data/events.json",{
-          method:"GET",
-          credentials:"include"
-        });
-          //session expired
-        if (res.status === 401) {
-        toast.error("Session expired. Please login again.");
-        navigate("/login");
-        return;
+    
+
+
+const fetchEventDetails = async () => {
+  try {
+    setLoading(true);
+    setError("");
+
+    const res = await fetch(
+      `/api/events/${encodeURIComponent(title)}`,
+      {
+        method: "GET",
+        credentials: "include",
       }
-  
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-        }
-  
-  
-        const data = await res.json();
-        const decodedTitle= decodeURIComponent(title);
-  const selected = data.find(e => e.title === decodedTitle);
+    );
 
-    if (!selected) {
-     throw new Error("Event not found");
-     }
+    if (res.status === 401) {
+      toast.error("Session expired. Please login again.");
+      navigate("/login");
+      return;
+    }
 
-     setEvent(selected);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
 
-        setEvent(selected);
-      } catch (e) {
-        console.log(e);
-        setError(`Something went wrong: ${e.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const data = await res.json();
+
+    setEvent(data); 
+
+  } catch (e) {
+    setError(`Something went wrong: ${e.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
     const handleTicketAction = async (type) => {
   try {
     if (type === "register") {

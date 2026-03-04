@@ -21,7 +21,9 @@ const MyEvents = () => {
       setLoading(true);
       setError("");
 
-      const res = await fetch("/data/events.json");
+     const res = await fetch("/api/my-events/", { credentials: "include" });
+        const { events } = await res.json();
+         setEvents(events);
         //session expired
       if (res.status === 401) {
       toast.error("Session expired. Please login again."); 
@@ -53,13 +55,16 @@ const MyEvents = () => {
       credentials: "include",
       body: JSON.stringify({ eventTitle })
     });
+        if (res.status === 401) {
+            toast.error("Session expired. Please login again."); 
+            navigate("/login");
+            return;
+          }
 
-    if (!res.ok) {
-      toast.error("Please login to View details!");
-        navigate("/login");
-  
-      return;
-    }
+
+          if (!res.ok) {
+        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+      }
 
     navigate(`/myevents/${encodeURIComponent(eventTitle)}`);
 

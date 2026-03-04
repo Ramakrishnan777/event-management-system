@@ -29,6 +29,7 @@ export default function EventsPage() {
         setPageLoading(true);
 
         const res = await fetch("/data/events.json");
+        
 
         if (!res.ok) throw new Error("Failed to load events");
 
