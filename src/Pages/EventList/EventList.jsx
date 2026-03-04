@@ -67,41 +67,28 @@ export default function EventsPage() {
   // ticket handler
 
   const handleGetTicket = async (eventTitle) => {
-    setLoadingEvent(eventTitle);
+  setLoadingEvent(eventTitle);
 
-    try {
-      const res = await fetch("/api/check-auth/", {
-        method: "POST",
-        credentials: "include",
+  try {
+    const res = await fetch("/api/check-auth/", {
+      method: "GET",          
+      credentials: "include" 
+    });
 
-   
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({ eventTitle }),
-      });
-
-      if (res.status === 401) {
-        toast.error("Session expired. Please login again.");
-        navigate("/login");
-  
-        return;
-      }
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-
-      }
-
-      navigate(`/event/${encodeURIComponent(eventTitle)}`);
-    } catch (e) {
-      console.log(e);
-      setError(`Something went wrong: ${e.message}`);
-    } finally {
-      setLoadingEvent(null);
+    if (res.status === 401) {
+      toast.error("Session expired. Please login again.");
+      navigate("/login");
+      return;
     }
-  };
+
+    navigate(`/event/${encodeURIComponent(eventTitle)}`);
+
+  } catch (e) {
+    setError(`Something went wrong: ${e.message}`);
+  } finally {
+    setLoadingEvent(null);
+  }
+};
 
  
   // pagination math
