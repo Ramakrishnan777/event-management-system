@@ -9,7 +9,7 @@ import MyEvents from "./Pages/MyEvents/MyEvents";
 import EventDetails from "./Pages/EventDetails/EventDetails";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import RegistrationPage from "./Pages/RegistrationPage/RegistrationPage";
 export default function App() {
   return (
     <>
@@ -23,6 +23,7 @@ export default function App() {
      <Route path="/results/:category" element={<ResultsPage />} />
       <Route path="/event/:title" element={<EventDetails mode="register"/>} />
         <Route path="/myevents/:title" element={<EventDetails mode="cancel"/>} />
+         <Route path="/register/:title" element={<RegistrationPage/>}/>
       </Routes>
          <ToastContainer 
         position="top-right"

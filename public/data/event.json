@@ -1,0 +1,27 @@
+  {
+    "title": "Modern Art Expo",
+    "category": "Art",
+    "date": "2026-03-12",
+    "registrationLastDate": "2026-03-09",
+    "time": "11:00 AM",
+    "location": "Nungambakkam, Chennai",
+    "price": 299,
+    "image": "/images/artevent1.jpg",
+    "organizer": "Chennai Art Circle",
+    "description": "Explore modern paintings, sculptures, and creative installations by emerging artists.",
+    "tickets": {
+      "total": 200,
+      "booked": 120,
+      "available": 80
+     
+    },
+    "ticketprice":200,
+    "agenda": [
+      { "time": "10:00 AM", "title": "Opening Ceremony" },
+      { "time": "11:00 AM", "title": "Gallery Tour" },
+      { "time": "01:00 PM", "title": "Live Painting" },
+      { "time": "03:00 PM", "title": "Artist Meet" }
+    ]
+  ,"user": {
+    "email": "user@gmail.com"
+  }}

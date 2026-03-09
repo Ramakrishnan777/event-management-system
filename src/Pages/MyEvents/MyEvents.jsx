@@ -17,61 +17,46 @@ const MyEvents = () => {
   }, []);
 
   const fetchMyEvents = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  try {
+    setLoading(true);
+    setError("");
 
-     const res = await fetch("/api/my-events/", { credentials: "include" });
-        const { events } = await res.json();
-         setEvents(events);
-        //session expired
-      if (res.status === 401) {
-      toast.error("Session expired. Please login again."); 
+    const res = await fetch("/api/my-events/", {
+      credentials: "include"
+    });
+
+    if (res.status === 401) {
+      toast.error("Session expired. Please login again.");
       navigate("/login");
       return;
     }
 
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-      }
-
-
-      const data = await res.json();
-      setEvents(data);
-    } catch (e) {
-      console.log(e);
-      setError(`Something went wrong: ${e.message}`);
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} - ${res.statusText}`);
     }
-  };
-    const handleViewDeatils = async (eventTitle) => {
-  try {
-    const res = await fetch("/api/check-auth/", {
-      method: "POST", 
-      headers: {
-        "Content-Type": "application/json" 
-      },
-      credentials: "include",
-      body: JSON.stringify({ eventTitle })
-    });
-        if (res.status === 401) {
-            toast.error("Session expired. Please login again."); 
-            navigate("/login");
-            return;
-          }
 
+    const data = await res.json();
 
-          if (!res.ok) {
-        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-      }
+const eventList = Array.isArray(data)
+  ? data
+  : Array.isArray(data?.events)
+  ? data.events
+  : [];
 
-    navigate(`/myevents/${encodeURIComponent(eventTitle)}`);
+setEvents(eventList);
 
   } catch (e) {
-    console.log(e.message);
+    console.log(e);
+    setError(`Something went wrong: ${e.message}`);
+  } finally {
+    setLoading(false);
   }
 };
+
+const handleViewDetails = (eventTitle) => {
+  navigate(`/myevents/${encodeURIComponent(eventTitle)}`);
+};
+
   if (loading) return <Spinner />;
 
   if (error)
@@ -132,8 +117,7 @@ return (
 
                   <button
                     className="viewdetailsbtn"
-                    onClick={()=>handleViewDeatils(event.title)}
-             
+                    onClick={()=> handleViewDetails(event.title)}
                   >
                     View Details
                   </button>
@@ -147,4 +131,5 @@ return (
   </section>
 );
 }
- export default MyEvents;
+
+export default MyEvents;

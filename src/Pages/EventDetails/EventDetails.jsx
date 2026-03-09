@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import Spinner from "../../Components/Spinner/Spinner";
  import './EventDetails.css';
+ 
+
 
 import {
 
@@ -28,7 +30,8 @@ const EventDetails = ({mode}) => {
     useEffect(() => {
       fetchEventDetails();
     }, [title]);
-    
+  
+
 
 
 const fetchEventDetails = async () => {
@@ -47,6 +50,7 @@ const fetchEventDetails = async () => {
     if (res.status === 401) {
       toast.error("Session expired. Please login again.");
       navigate("/login");
+
       return;
     }
 
@@ -64,10 +68,11 @@ const fetchEventDetails = async () => {
     setLoading(false);
   }
 };
+
     const handleTicketAction = async (type) => {
   try {
     if (type === "register") {
-      toast.info("Registration Page is in Progress. Coming soon..");
+     navigate(`/register/${encodeURIComponent(title)}`);
       return;
     }
 

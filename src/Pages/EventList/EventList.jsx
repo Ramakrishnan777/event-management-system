@@ -28,13 +28,18 @@ export default function EventsPage() {
       try {
         setPageLoading(true);
 
-        const res = await fetch("/data/events.json");
+        const res = await fetch("/api/list-events/",{credentials:"include"});
         
 
         if (!res.ok) throw new Error("Failed to load events");
 
         const data = await res.json();
-        setEvents(data);
+        const eventList = Array.isArray(data)
+          ?data
+          : Array.isArray(data?.events)
+          ? data.events
+          : [];
+          setEvents(eventList);
       } catch (e) {
         setError(`Something went wrong: ${e.message}`);
       } finally {
@@ -53,21 +58,18 @@ export default function EventsPage() {
 
   // search filter
 
-  const filterEvents = events.filter((event) => {
-    const text = search.toLowerCase();
-
-    return (
-      event.title.toLowerCase().includes(text) ||
-      event.category.toLowerCase().includes(text) ||
-      event.location.toLowerCase().includes(text)
-    );
-  });
-
-
+  const filterEvents = (Array.isArray(events) ? events : []).filter((event) => {
+  const text = search.toLowerCase();
+  return (
+    event.title?.toLowerCase().includes(text) ||
+    event.category?.toLowerCase().includes(text) ||
+    event.location?.toLowerCase().includes(text)
+  );
+});
   // ticket handler
 
-  const handleGetTicket = async (eventTitle) => {
-  setLoadingEvent(eventTitle);
+  const handleGetTicket = async title => {
+  setLoadingEvent(title);
 
   try {
     const res = await fetch("/api/check-auth/", {
@@ -128,7 +130,7 @@ export default function EventsPage() {
         ) : currentEvents.length > 0 ? (
           currentEvents.map((event) => (
             <div
-              key={`${event.title}-${event.date}-${event.time}`}
+              key={ `${event.title}-${event.date}-${event.time}`}
               className="reusable-event-card"
             >
               <img

@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import "./mainpage.css";
 import { useState, useEffect } from "react";
@@ -21,37 +20,41 @@ export default function HomePage() {
     fetchNearestEvents();
   }, []);
 
-
+const handleSearch = (e) => {
+  e.preventDefault();
+  if (!search.trim()) return;
+  navigate(`/results?search=${encodeURIComponent(search)}`);
+};
   // Fetch nearest events
 
   const fetchNearestEvents = async () => {
-    try {
-      setPageLoading(true);
-      setError("");
+  try {
+    setPageLoading(true);
+    setError("");
 
-      const res = await fetch("/api/events/nearest");
+    const res = await fetch("/api/upcoming-events/", { credentials: "include" });
 
- 
-      if (!res.ok) throw new Error("Failed to load");
-
-      const data = await res.json();
-      setEvents(data);
-    } catch (err) {
-      setError("Failed to load events");
-    } finally {
-      setPageLoading(false);
+    if (!res.ok) {
+      throw new Error("Failed to load events");
     }
-  };
 
-  //SEARCH
+    const data = await res.json();
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (!search.trim()) return;
+    // Safely extract event list
+    const eventList = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.events)
+        ? data.events
+        : [];
 
-    navigate(`/results?search=${encodeURIComponent(search)}`);
-  };
-
+    setEvents(eventList);
+  } catch (err) {
+    console.error("Fetch error:", err);
+    setError("Failed to load events");
+  } finally {
+    setPageLoading(false);
+  }
+};
 
   // Get Ticket
 
@@ -110,7 +113,7 @@ export default function HomePage() {
   };
 
   const handleCategoryClick = (category) => {
-    navigate(`/results/${category}`);
+    navigate(`/results?category=${encodeURIComponent(category)}`);  
   };
 
   
@@ -162,15 +165,15 @@ export default function HomePage() {
         <div className="category-container">
           <div
             className="category-card"
-            onClick={() => handleCategoryClick("concerts")}
+            onClick={() => handleCategoryClick("concert")}
           >
-            <img src="/images/concert category.png" alt="Concerts" />
+            <img src="/images/concert category.png" alt="Concert" />
             <p>Concerts</p>
           </div>
 
           <div
             className="category-card"
-            onClick={() => handleCategoryClick("foodfestival")}
+            onClick={() => handleCategoryClick("food festival")}
           >
             <img src="/images/food category.png" alt="Food Festival" />
             <p>Food Festival</p>
@@ -186,7 +189,7 @@ export default function HomePage() {
 
           <div
             className="category-card"
-            onClick={() => handleCategoryClick("sports")}
+            onClick={() => handleCategoryClick("sport")}
           >
             <img src="/images/Sports category.png" alt="Sports" />
             <p>Sports</p>
@@ -211,46 +214,45 @@ export default function HomePage() {
         {error && <p className="error-text">{error}</p>}
 
         {pageLoading ? (
-          <ButtonSpinner />
-        ) : (
-          <div className="events">
-            {events.map((event) => (
-              <div
-                className="eventcard"
-                key={`${event.title}-${event.date}-${event.time}`}
+  <ButtonSpinner />
+) : (
+  <div className="events">
+    {Array.isArray(events) && events.length > 0 ? (
+      events.map((event) => (
+        <div
+          className="eventcard"
+          key={`${event.title}-${event.date}-${event.time}`}
+        >
+          <img src={event.image || "/images/conferenceEvent.jpg"} alt={event.title} />
+          <div className="eventcard-body">
+            <span className="event-category">{event.category}</span>
+            <h3 className="event-name">{event.title}</h3>
+            <p className="event-date">📅 {event.date} · {event.time}</p>
+            <p className="event-location">📍 {event.location}</p>
+            <div className="cardfooter">
+              <span className="event-price">₹{event.price}</span>
+              <button
+                className="ticket-btn"
+                onClick={() => handleGetTicket(event.title)}
+                disabled={ticketLoading === event.title}
               >
-                <img src={event.image} alt={event.title} />
-
-                <div className="eventcard-body">
-                  <span className="event-category">{event.category}</span>
-
-                  <h3 className="event-name">{event.title}</h3>
-
-                  <p className="event-date">
-                    📅 {event.eventDate} · {event.time}
-                  </p>
-
-                  <p className="event-location">📍 {event.location}</p>
-
-                  <div className="cardfooter">
-                    <span className="event-price">₹{event.price}</span>
-
-                    <button
-                      className="ticket-btn"
-                      onClick={() => handleGetTicket(event.title)}
-                      disabled={ticketLoading === event.title}
-                    >
-                      {ticketLoading === event.title && <ButtonSpinner />}
-                      {ticketLoading === event.title
-                        ? "Processing..."
-                        : "Get Ticket"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+                {ticketLoading === event.title ? (
+                  <>
+                    <ButtonSpinner /> Processing...
+                  </>
+                ) : (
+                  "Get Ticket"
+                )}
+              </button>
+            </div>
           </div>
-        )}
+        </div>
+      ))
+    ) : (
+      <p className="no-events">No upcoming events available.</p>
+    )}
+  </div>
+)}
 
         <button className="alleventsbtn" onClick={handleAllEvents}>
           View All Events
@@ -295,4 +297,3 @@ export default function HomePage() {
     </div>
   );
 }
-
