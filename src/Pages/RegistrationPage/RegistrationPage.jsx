@@ -151,7 +151,7 @@ const RegistrationPage = () => {
       <h2 className="heading">Event Registration</h2>
       <p className="subtitle">
         Fill in your details to secure your spot at{" "}
-        <b>Tech Conference 2026</b>
+        <b>{event.title}</b>
       </p>
 
       <div className="container">

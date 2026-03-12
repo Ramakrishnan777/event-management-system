@@ -21,7 +21,7 @@ export default function EventsPage() {
   const navigate = useNavigate();
   const eventsPerPage = 6;
 
-  // fetch data
+ // fetch data
 
   useEffect(() => {
     async function fetchEvents() {
@@ -68,25 +68,58 @@ export default function EventsPage() {
 });
   // ticket handler
 
-  const handleGetTicket = async title => {
+ const handleGetTicket = async (title) => {
   setLoadingEvent(title);
 
   try {
     const res = await fetch("/api/check-auth/", {
-      method: "GET",          
-      credentials: "include" 
+      method: "GET",
+      credentials: "include",
     });
 
+    // 401  user not logged in or session expired
     if (res.status === 401) {
-      toast.error("Session expired. Please login again.");
+      toast.error("Please login to get a ticket");
       navigate("/login");
       return;
     }
 
-    navigate(`/event/${encodeURIComponent(eventTitle)}`);
+    // 403  logged in but not allowed
+    if (res.status === 403) {
+      toast.error("You are not allowed to perform this action");
+      return;
+    }
+
+    // 404 event not found
+    if (res.status === 404) {
+      toast.error("Event not found");
+      return;
+    }
+
+    // 429  too many requests
+    if (res.status === 429) {
+      toast.error("Too many requests. Please try again later.");
+      return;
+    }
+
+    // server errors
+    if (res.status >= 500) {
+      toast.error("Server error. Please try again later.");
+      return;
+    }
+
+    // any other unexpected error
+    if (!res.ok) {
+      toast.error("Something went wrong");
+      return;
+    }
+
+    // success go to event details page
+    navigate(`/event/${encodeURIComponent(title)}`);
 
   } catch (e) {
-    setError(`Something went wrong: ${e.message}`);
+    console.log(e.message);
+    toast.error("Network error. Check your internet connection.");
   } finally {
     setLoadingEvent(null);
   }

@@ -70,7 +70,7 @@ body {
 .topbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
     padding: 20px 32px;
     position: absolute;
@@ -79,30 +79,7 @@ body {
     z-index: 3;
 }
 
-/* Logout button */
-.LogOut {
-    width: 100px;
-    height: 44px;
-    padding: 6px 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
 
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
-    background: transparent;
-    transition: all 0.3s ease;
-}
-
-
-.LogOut:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
 
 /* Logo container */
 .vibely-logo {

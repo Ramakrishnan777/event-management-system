@@ -1,0 +1,43 @@
+.results-page {
+ 
+      background: linear-gradient(135deg, #f6f3ff, #eef7ff);
+
+
+  min-height: 100vh;
+   
+}
+
+.results-title {
+
+   text-align: center;
+ font-size: 2.1rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+}
+.no-results-message {
+  text-align: center;
+ font-size: 2rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .results-title {
+    font-size: 1.875rem;
+  }
+  
+  .no-results-message {
+    padding: 40px 20px;
+    font-size: 1rem;
+  }
+}

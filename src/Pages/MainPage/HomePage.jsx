@@ -56,64 +56,52 @@ const handleSearch = (e) => {
   }
 };
 
-  // Get Ticket
+  // // Get Ticket
 
-  const handleGetTicket = async (eventTitle) => {
-    setTicketLoading(eventTitle);
+  const handleGetTicket = async (title) => {
+  setTicketLoading(title);
 
-    try {
-      const res = await fetch("/api/check-auth/", {
-        method: "POST",
-        credentials: "include",
+  try {
+    const res = await fetch("/api/check-auth/", {
+      method: "GET",
+      credentials: "include",
+    });
 
-     
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({ eventTitle }),
-      });
-            if (res.status === 401) {
-      toast.error("Session expired. Please login again."); 
+    // NOT LOGGED IN OR SESSION EXPIRED
+    if (res.status === 401 || res.status === 403) {
+      toast.error("Please login to get a ticket");
       navigate("/login");
       return;
     }
 
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-      }
-
-    } catch (e) {
-      console.log(e.message);
-    } finally {
-      setTicketLoading(null);
-    }
-  };
-
-
-  // Logout
-
-  const handleLogout = async () => {
     
-    await fetch("/api/logout/", {
-      method: "POST",
-      credentials: "include",
-    });
 
-    navigate("/login");
-  };
+    // OTHER ERRORS
+    if (!res.ok) {
+      toast.error("Something went wrong");
+      return;
+    }
+
+    // SUCCESS → navigate to event details
+    navigate(`/event/${encodeURIComponent(title)}`);
+
+  } catch (e) {
+    console.error(e.message);
+    toast.error("Network error. Check your internet connection.");
+  } finally {
+    setTicketLoading(null);
+  }
+};
+
 
   const handleAllEvents = () => {
     navigate("/eventlist");
   };
 
-  const handleMyEvents = () => {
-    navigate("/myevents");
-  };
+
 
   const handleCategoryClick = (category) => {
-    navigate(`/results?category=${encodeURIComponent(category)}`);  
+    navigate(`/results?category=${encodeURIComponent(category)}`);  //  query param
   };
 
   
@@ -130,13 +118,9 @@ const handleSearch = (e) => {
             <div className="vibely-text">Vibely</div>
           </div>
 
-          <button className="myeventsbtn" onClick={handleMyEvents}>
-            My Events
-          </button>
+  
 
-          <button className="LogOut" onClick={handleLogout}>
-            Log Out
-          </button>
+    
         </div>
 
         <div className="herocontent">

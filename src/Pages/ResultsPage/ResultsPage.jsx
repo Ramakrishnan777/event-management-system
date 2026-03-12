@@ -1,15 +1,17 @@
 
 import  { useEffect, useState } from "react";
-import { useSearchParams, useParams, useNavigate } from "react-router-dom";
+import { useSearchParams,  useNavigate } from "react-router-dom";
 import "../../index.css";
 import Spinner from "../../Components/Spinner/Spinner";
 import ButtonSpinner from "../../Components/Spinner/ButtonSpinner";
 import { toast } from 'react-toastify'; 
+import "./ResultPage.css"
+
 
 export default function ResultsPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("search") || "";
-  const { category } = useParams();
+  const  category  = searchParams.get("category") || "";
   const navigate = useNavigate();
 
   const [events, setEvents] = useState([]);
@@ -34,12 +36,12 @@ export default function ResultsPage() {
       let url = "";
 
       if (category) {
-        url = `/api/events/?category=${encodeURIComponent(category)}`;
+        url = `/api/list-events/?category=${encodeURIComponent(category)}`;
       } else {
         url = `/api/search/?q=${encodeURIComponent(query)}`;
       }
 
-      const res = await fetch(url);
+      const res = await fetch(url,{credentials:"include"});
 
       // HANDLE STATUS CODES
 
@@ -73,7 +75,7 @@ export default function ResultsPage() {
         return;
       }
 
-      const eventList = Array.isArray(data.events) ? data.events : data;
+      const eventList = Array.isArray(data?.events) ? data.events : data;
 
       if (!Array.isArray(eventList)) {
         setError("Unexpected response format from server.");
@@ -145,14 +147,14 @@ export default function ResultsPage() {
 
   return (
     <section className="results-page">
-      <h1 className="results-title">
-        {category ? `${category} Events` : `Results for "${query}"`}
-      </h1>
+    <h1 className="results-title">
+  {category ? `${category} Events` : `Results for "${query}"`}
+</h1>
 
-      {events.length === 0 ? (
-        <p style={{ textAlign: "center", color: "#777", padding: "40px" }}>
-          🔍 No events found
-        </p>
+{events.length === 0 ? (
+  <p className="no-results-message">
+    🔍 No events found
+  </p>
       ) : (
         <div className="events-grid-container">
           {events.map((event) => (

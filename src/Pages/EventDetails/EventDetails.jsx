@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import Spinner from "../../Components/Spinner/Spinner";
  import './EventDetails.css';
- 
-
 
 import {
 
@@ -30,8 +28,7 @@ const EventDetails = ({mode}) => {
     useEffect(() => {
       fetchEventDetails();
     }, [title]);
-  
-
+    
 
 
 const fetchEventDetails = async () => {
@@ -40,7 +37,7 @@ const fetchEventDetails = async () => {
     setError("");
 
     const res = await fetch(
-      `/api/events/${encodeURIComponent(title)}`,
+      `/api/event/${encodeURIComponent(title)}`,
       {
         method: "GET",
         credentials: "include",
@@ -50,7 +47,6 @@ const fetchEventDetails = async () => {
     if (res.status === 401) {
       toast.error("Session expired. Please login again.");
       navigate("/login");
-
       return;
     }
 
@@ -68,10 +64,9 @@ const fetchEventDetails = async () => {
     setLoading(false);
   }
 };
-
     const handleTicketAction = async (type) => {
   try {
-    if (type === "register") {
+   if (type === "register") {
      navigate(`/register/${encodeURIComponent(title)}`);
       return;
     }
@@ -135,7 +130,7 @@ const fetchEventDetails = async () => {
   </div>
     <div className="info-row">
 <BsTag size="30" color="#F97316" />
-  <p>Registration Last Date:{event.registrationLastDate}</p>
+  <p>Registration Last Date:{event.registration_last_date}</p>
   </div>
     <div className="info-row">
 <AiOutlineWallet color="#14B8A6" size={30} /> 
@@ -169,24 +164,24 @@ const fetchEventDetails = async () => {
     <div className="stat-box">
        <TickCircle size="45" color="#4A6CF7" variant="Bold" />
        <span className="stat-label">Total Tickets</span>
-       <span className="stat-value ">{event.tickets.total}</span>
+       <span className="stat-value ">{event.total_tickets}</span>
        </div>
 
       <div className="stat-box">
           <FaTicketAlt size={45} color="#3b82f6" />
           <span className="stat-label">Booked</span>
-          <span className="stat-value booked">{event.tickets.booked}</span>
+          <span className="stat-value booked">{event.booked_tickets}</span>
           </div>
        <div className="stat-box">
         <TickCircle size="45" color="green" variant="Bold" />
         <span className="stat-label">Available</span>
-        <span className="stat-value available">{event.tickets.available}</span>
+        <span className="stat-value available">{event.available_tickets}</span>
         </div>
    </div>
 
 
  {/* Action Button */}
-  {event.tickets.available>0?(
+  {event.available_tickets>0?(
     mode==="register" ?(
       <button className="register-btn" onClick={() => handleTicketAction( "register")}>Register Now</button>
     ): <button className="cancel-btn"  onClick={() => handleTicketAction( "cancel")}
