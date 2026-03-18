@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import "../../index.css";
 import "./EventList.css";
@@ -141,99 +140,131 @@ export default function EventsPage() {
     );
 
   return (
-    <div className="results-page">
-      {/* Search */}
-      <header>
-        <div className="searchbox">
+      <div className="events-page">
+      {/* Search Header */}
+      <header className="events-header">
+        <div className="search-container">
+          <span className="search-icon">🔍</span>
           <input
             type="text"
-            placeholder="Search events"
+            className="search-input"
+            placeholder="Search events by name, category, or location..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </header>
 
-  
       {/* Events Grid */}
-  
-      <div className="events-grid-container">
-        {pageLoading ? (
-          <ButtonSpinner />
-        ) : currentEvents.length > 0 ? (
-          currentEvents.map((event) => (
-            <div
-              key={ `${event.title}-${event.date}-${event.time}`}
-              className="reusable-event-card"
-            >
-              <img
-                src={event.image || "/images/conferenceEvent.jpg"}
-                alt={event.title}
-              />
-
-              <div className="card-body">
-                <span className="event-category">{event.category}</span>
-
-                <h3 className="event-title">{event.title}</h3>
-
-            
-                <div className="event-info">
-                  📅 {event.date} · {event.time}
-                </div>
-
-                <div className="event-info">📍 {event.location}</div>
-
-                <div className="card-footer">
-               
-                  <span className="event-price">₹{event.price}</span>
-
-                  <button
-                    className="gradient-ticket-btn"
-                    onClick={() => handleGetTicket(event.title)}
-                    disabled={loadingEvent === event.title}
-                  >
-                    {loadingEvent === event.title ? (
-                      <ButtonSpinner />
-                    ) : (
-                      "Get Ticket"
-                    )}
-                  </button>
-                </div>
-              </div>
+      <main className="events-main">
+        <div className="events-grid">
+          {pageLoading ? (
+            <div className="loading-container">
+              <ButtonSpinner />
+              <p className="loading-text">Loading amazing events...</p>
             </div>
-          ))
-        ) : (
-          <div className="no-events">No events found for your search 😕</div>
+          ) : currentEvents.length > 0 ? (
+            currentEvents.map((event, index) => (
+              <article
+                key={`${event.title}-${event.date}-${event.time}-${index}`}
+                className="event-card"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {/* Card Image */}
+                <div className="card-image-wrapper">
+                  <img
+                    src={event.image || "/images/conferenceEvent.jpg"}
+                    alt={event.title || "Event"}
+                    className="card-image"
+                    loading="lazy"
+                  />
+                  <div className="image-overlay"></div>
+                  <span className="category-badge">{event.category || "Event"}</span>
+                </div>
+
+                {/* Card Content */}
+                <div className="card-content">
+                  <h3 className="event-title">{event.title || "Untitled Event"}</h3>
+                  
+                  <div className="event-details">
+                    <div className="detail-item">
+                      <span className="detail-icon">📅</span>
+                      <span className="detail-text">{event.date} · {event.time}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-icon">📍</span>
+                      <span className="detail-text">{event.location || "Location TBD"}</span>
+                    </div>
+                  </div>
+
+                  {/* Card Footer */}
+                  <div className="card-footer">
+                    <div className="price-container">
+                      <span className="price-label">Price</span>
+                      <span className="event-price">₹{event.price || "0"}</span>
+                    </div>
+                    <button
+                      className="ticket-button"
+                      onClick={() => handleGetTicket(event.title)}
+                      disabled={loadingEvent === event.title}
+                    >
+                      {loadingEvent === event.title ? (
+                        <span className="button-loading">
+                          <ButtonSpinner />
+                        </span>
+                      ) : (
+                        <>
+                          <span>Get Ticket</span>
+                          <span className="button-arrow">→</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))
+          ) : (
+            <div className="no-events">
+              <div className="no-events-icon">🔍</div>
+              <h3>No events found</h3>
+              <p>Try adjusting your search terms</p>
+            </div>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <footer className="pagination-container">
+            <button
+              className="pagination-btn"
+              disabled={currentpage === 1}
+              onClick={() => setCurrentPage(currentpage - 1)}
+            >
+              ← Previous
+            </button>
+
+            <div className="page-numbers">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  className={`page-number ${currentpage === i + 1 ? "active" : ""}`}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+
+            <button
+              className="pagination-btn"
+              disabled={currentpage === totalPages}
+              onClick={() => setCurrentPage(currentpage + 1)}
+            >
+              Next →
+            </button>
+          </footer>
         )}
-      </div>
-
-   
-      {/* Pagination */}
- 
-      <footer className="pagination">
-        <button
-          disabled={currentpage === 1}
-          onClick={() => setCurrentPage(currentpage - 1)}
-        >
-          Previous
-        </button>
-
-        {Array.from({ length: totalPages }, (_, i) => (
-          <span
-            key={i}
-            className={`page-number ${currentpage === i + 1 ? "active" : ""}`}
-          >
-            {i + 1}
-          </span>
-        ))}
-
-        <button
-          disabled={currentpage === totalPages}
-          onClick={() => setCurrentPage(currentpage + 1)}
-        >
-          Next
-        </button>
-      </footer>
+      </main>
     </div>
   );
 }
