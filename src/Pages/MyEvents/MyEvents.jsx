@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../../index.css";
+
 import Spinner from "../../Components/Spinner/Spinner";
 import { useNavigate } from "react-router-dom";
 import "./MyEvents.css"
@@ -21,10 +21,10 @@ const MyEvents = () => {
     setLoading(true);
     setError("");
 
-    const res = await fetch("/api/my-events/", {
-      credentials: "include"
-    });
-
+    // const res = await fetch("/api/my-events/", {
+    //   credentials: "include"
+    // });
+  const res =await fetch("./data/events.json")
     if (res.status === 401) {
       toast.error("Session expired. Please login again.");
       navigate("/login");
@@ -67,68 +67,89 @@ const handleViewDetails = (eventTitle) => {
     );
 
 return (
-  <section className="myevents-page">
-    {events.length === 0 ? (
-      <p style={{ textAlign: "center", color: "#777", padding: "40px" }}>
-        <strong>
-          You haven't registered for any events yet. Explore events and book
-          your first one!
-        </strong>
-        <br />
-
-        <button
-          className="Alleventsbtn"
-          type="button"
-          onClick={() => navigate("/eventlist")}
-     
-        >
-          View All Events
-        </button>
-      </p>
-    ) : (
-      <>
-        
-        <h2 className="myevents-title">
-     
-          My Events
-        </h2>
-
-        <div className="events-grid-container">
-          {events.map((event) => (
-            <div key={`${event.title}-${event.date}-${event.time}`} className="reusable-event-card">
-              <img
-                src={event.image || "/images/conferenceEvent.jpg"}
-                alt={event.title}
-              />
-
-              <div className="card-body">
-                <span className="event-category">{event.category}</span>
-
-                <h3 className="event-title">{event.title}</h3>
-
-                <div className="event-info">
-                  📅 {event.date} · {event.time}
+ <section className="myevents-page">
+  {events.length === 0 ? (
+    <div className="empty-state">
+      <div className="empty-icon">🎫</div>
+      <h3>No Events Yet</h3>
+      <p>You haven't registered for any events yet. Explore events and book your first one!</p>
+      <button className="Alleventsbtn" onClick={() => navigate("/eventlist")}>
+        Browse Events
+      </button>
+    </div>
+  ) : (
+    <>
+      <div className="page-header">
+        <h2 className="myevents-title">My Events</h2>
+        <p className="myevents-subtitle">Your registered events at a glance</p>
+      </div>
+      
+      <div className="tickets-container">
+        {events.map((event, index) => (
+          <div key={index} className="ticket-card">
+            {/* Left Side - Image Section */}
+            <div className="ticket-image-section">
+              <img src={event.image || "/images/conferenceEvent.jpg"} alt={event.title} />
+              <div className="image-overlay">
+                <span className="category-tag">{event.category || "General"}</span>
+              </div>
+            </div>
+            
+            {/* Middle - Event Details */}
+            <div className="ticket-details">
+              <h3 className="ticket-title">{event.title || "Untitled Event"}</h3>
+              
+              <div className="details-grid">
+                <div className="detail-item">
+                  <span className="detail-icon">📅</span>
+                  <div className="detail-content">
+                    <span className="detail-label">Date</span>
+                    <span className="detail-value">{event.date || "TBD"}</span>
+                  </div>
                 </div>
-
-                <div className="event-info">📍 {event.location}</div>
-
-                <div className="card-footer">
-                  <span className="event-price">{event.price}</span>
-
-                  <button
-                    className="viewdetailsbtn"
-                    onClick={()=> handleViewDetails(event.title)}
-                  >
-                    View Details
-                  </button>
+                
+                <div className="detail-item">
+                  <span className="detail-icon">🕐</span>
+                  <div className="detail-content">
+                    <span className="detail-label">Time</span>
+                    <span className="detail-value">{event.time || "TBD"}</span>
+                  </div>
+                </div>
+                
+                <div className="detail-item full-width">
+                  <span className="detail-icon">📍</span>
+                  <div className="detail-content">
+                    <span className="detail-label">Location</span>
+                    <span className="detail-value">{event.location || "TBD"}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </>
-    )}
-  </section>
+            
+            {/* Right Side - Price & Action */}
+            <div className="ticket-action">
+              <div className="price-section">
+                <span className="price-label">Price</span>
+                <span className="price-amount">{event.price || "Free"}</span>
+              </div>
+              <button 
+                className="view-details-btn"
+                onClick={() => handleViewDetails(event.title)}
+              >
+                View Details
+                <span className="btn-arrow">→</span>
+              </button>
+            </div>
+            
+            {/* Decorative Elements */}
+        
+            <div className="ticket-notch right-notch"></div>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+</section>
 );
 }
 
