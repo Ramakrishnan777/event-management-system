@@ -21,10 +21,10 @@ const MyEvents = () => {
     setLoading(true);
     setError("");
 
-    // const res = await fetch("/api/my-events/", {
-    //   credentials: "include"
-    // });
-  const res =await fetch("./data/events.json")
+    const res = await fetch("/api/my-events/", {
+      credentials: "include"
+    });
+
     if (res.status === 401) {
       toast.error("Session expired. Please login again.");
       navigate("/login");
