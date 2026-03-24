@@ -215,3 +215,137 @@ gap:12px;
    }
    
 }
+/* ===== PASSKEY MODAL STYLES ===== */
+.passkey-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.passkey-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; } 
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.passkey-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.passkey-header h3 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 1.1rem;
+}
+
+.passkey-body {
+  margin: 16px 0;
+}
+
+.passkey-body p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.passkey-input-group {
+  position: relative;
+  margin: 12px 0;
+}
+
+.passkey-input-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.passkey-input-group input:focus {
+  outline: none;
+  border-color: #4A6CF7;
+}
+
+.passkey-input-group input.error {
+  border-color: #e63946;
+}
+
+.passkey-error {
+  color: #e63946;
+  font-size: 0.85rem;
+  margin: 6px 0 0 4px;
+  display: block;
+}
+
+.passkey-hint {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 8px;
+}
+
+.passkey-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.passkey-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.passkey-btn-primary {
+  background: #4A6CF7;
+  color: white;
+}
+.passkey-btn-primary:hover { background: #3a5ce5; }
+.passkey-btn-primary:disabled { 
+  background: #a0b4ff; 
+  cursor: not-allowed; 
+}
+
+.passkey-btn-secondary {
+  background: #f1f5f9;
+  color: #334155;
+}
+.passkey-btn-secondary:hover { background: #e2e8f0; }
+
+.passkey-success {
+  text-align: center;
+  padding: 20px 10px;
+}
+.passkey-success .check-icon {
+  font-size: 3rem;
+  color: #10b981;
+  margin-bottom: 12px;
+}
