@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { HiUserGroup } from "react-icons/hi";
+import { HiUserGroup, HiKey } from "react-icons/hi";
 import "./RegistrationPage.css";
 import Spinner from "../../Components/Spinner/Spinner";
-import { Calendar, Location, TickCircle } from "iconsax-react";
+import { Calendar, Location, TickCircle, Lock } from "iconsax-react";
 import { FaFileInvoice } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -21,15 +21,42 @@ const RegistrationPage = () => {
     specialRequest: "",
   });
 
+  // ===== PASSKEY STATES (NEW) =====
+  const [showPasskeyModal, setShowPasskeyModal] = useState(false);
+  const [passkey, setPasskey] = useState("");
+  const [confirmPasskey, setConfirmPasskey] = useState("");
+  const [passkeyError, setPasskeyError] = useState("");
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
+  const [passkeyCreated, setPasskeyCreated] = useState(false);
+  const [userHasPasskey, setUserHasPasskey] = useState(null); // null = checking
+
   const { title } = useParams();
+
+  // Check if user already has a passkey (NEW)
+  useEffect(() => {
+    const checkUserPasskey = async () => {
+      try {
+        const res = await fetch("/api/passkey/status", {
+          credentials: "include"
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUserHasPasskey(data.hasPasskey);
+        }
+      } catch (err) {
+        console.error("Passkey status check failed:", err);
+        setUserHasPasskey(false);
+      }
+    };
+    checkUserPasskey();
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
       setPageLoading(true);
       setApiError(null);
       try {
-        const res = await fetch(`/api/events/${title}`);
-        
+        const res = await fetch(`/api/event/${title}`);
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         const data = await res.json();
         if (!data) throw new Error("Event not found");
@@ -44,28 +71,18 @@ const RegistrationPage = () => {
     fetchEvents();
   }, [title]);
 
-  // Show api error
   useEffect(() => {
-    if (apiError) {
-      toast.error(apiError);
-    }
+    if (apiError) toast.error(apiError);
   }, [apiError]);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Form validate function
   const validateForm = () => {
     const newError = {};
-    if (!form.name.trim()) {
-      newError.name = "Full name is required";
-    }
+    if (!form.name.trim()) newError.name = "Full name is required";
     if (!form.email.trim()) {
       newError.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
@@ -77,42 +94,120 @@ const RegistrationPage = () => {
       newError.phone = "Enter a valid phone Number";
     }
     setError(newError);
-    return Object.keys(newError).length === 0; // checks whether the form has any validation errors
+    return Object.keys(newError).length === 0;
   };
 
-  // Handle booking submit
-  async function handleBooking() {
-    if (!validateForm()) {
-      return;
-    }
+  // ===== NEW: Actual booking logic (extracted) =====
+  const proceedWithBooking = async () => {
+    if (!validateForm()) return;
+    
+    const decodedTitle = decodeURIComponent(event.title);
     const bookingData = {
       ...form,
-      title,
-      tickets,
+      eventTitle: decodedTitle,
+      tickets: tickets,
       eventId: event.id,
-      totalAmount: event.ticketprice * tickets,
+      totalAmount: event.price * tickets,
     };
+    
+    const res = await fetch("/api/book-ticket/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(bookingData),
+    });
+    const data = await res.json();
+    
+    if (res.ok) {
+      toast.success("Booking Successful!");
+      console.log(data);
+    } else {
+      toast.error(data.message || "Booking failed");
+    }
+  };
+
+  // ===== PASSKEY CREATION HANDLER  =====
+  const handleCreatePasskey = async () => {
+    if (!passkey.trim()) {
+      setPasskeyError("Passkey is required");
+      return;
+    }
+    if (passkey.length < 4) {
+      setPasskeyError("Passkey must be at least 4 characters");
+      return;
+    }
+    if (passkey !== confirmPasskey) {
+      setPasskeyError("Passkeys do not match");
+      return;
+    }
+
+    setPasskeyLoading(true);
+    setPasskeyError("");
+
     try {
-      const res = await fetch("/api/book-ticket", {
+      const res = await fetch("/api/passkey/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(bookingData),
+        body: JSON.stringify({ passkey: passkey.trim() })
       });
       const data = await res.json();
+      
       if (res.ok) {
-        toast.success("Booking Successful!");
-        console.log(data);
+        setPasskeyCreated(true);
+        setUserHasPasskey(true);
+        toast.success("Passkey created successfully! 🔐");
+        
+        // After passkey saved on server → NOW proceed with booking
+        setTimeout(() => {
+          setShowPasskeyModal(false);
+          proceedWithBooking();
+        }, 1000);
       } else {
-        toast.error(data.message || "Booking failed");
+        setPasskeyError(data.message || "Failed to create passkey");
       }
     } catch (err) {
-      console.error("Booking error", err);
-      toast.error("Something went wrong while booking");
+      setPasskeyError("Something went wrong. Please try again.");
+      console.error("Passkey creation error:", err);
+    } finally {
+      setPasskeyLoading(false);
     }
+  };
+
+  // ===== MODIFIED: handleBooking - Passkey FIRST, then booking =====
+  async function handleBooking() {
+    if (!validateForm()) return;
+    
+    // 🔐 STEP 1: Check if user has passkey
+    let hasPasskey = userHasPasskey;
+    
+    // If status unknown, fetch it now
+    if (hasPasskey === null) {
+      try {
+        const statusRes = await fetch("/api/passkey/status", { credentials: "include" });
+        if (statusRes.ok) {
+          const statusData = await statusRes.json();
+          hasPasskey = statusData.hasPasskey;
+          setUserHasPasskey(hasPasskey);
+        }
+      } catch (e) {
+        console.error("Passkey status check failed:", e);
+        hasPasskey = false;
+      }
+    }
+    
+    // 🔐 STEP 2: If NO passkey, show modal FIRST and STOP here
+    if (!hasPasskey) {
+      setShowPasskeyModal(true);
+      return;
+    }
+    
+    // ✅ STEP 3: User has passkey → Proceed with booking immediately
+    await proceedWithBooking();
   }
+
+
+
 
   // Show loading state
   if (pageLoading) {
@@ -124,8 +219,8 @@ const RegistrationPage = () => {
     return <p>No event found</p>;
   }
 
-  const totalAmount = event.ticketprice * tickets;
-  const maxTickets = Math.min(4, event.tickets.available);
+  const totalAmount = event.price * tickets;
+  const maxTickets = Math.min(4, event.available_tickets);
 
   return (
     <div className="event-page">
@@ -138,16 +233,16 @@ const RegistrationPage = () => {
           <Location size="16px" color="white" />
           <span className="location">{event.location}</span>
         </div>
-        <span className="seats">{event.tickets.available} seats left</span>
+        <span className="seats">{event.available_tickets} seats left</span>
       </div>
 
-  {/* Security Notice */}
-  <div className="security-notice">
-    ⚠️ Please keep your event booking details secure and avoid sharing them with others. 
-    We verify cancellation requests, but users should always protect their own information.
-  </div>
+      {/* Security Notice */}
+      <div className="security-notice">
+        ⚠️ Please keep your event booking details secure and avoid sharing them with others. 
+        We verify cancellation requests, but users should always protect their own information.
+      </div>
 
-{/* Heading */}
+      {/* Heading */}
       <h2 className="heading">Event Registration</h2>
       <p className="subtitle">
         Fill in your details to secure your spot at{" "}
@@ -246,7 +341,7 @@ const RegistrationPage = () => {
 
           <div className="summary-item">
             <span>Price per Ticket :</span>
-            <b>₹{event.ticketprice}</b>
+            <b>₹{event.price}</b>
           </div>
 
           <div className="summary-item">
@@ -266,7 +361,7 @@ const RegistrationPage = () => {
 
           <div className="seat-warning">
             <TickCircle size="16" color="green" />
-            Only {event?.tickets?.available} seats left!
+            Only {event.available_tickets} seats left!
           </div>
 
           <button className="pay-btn" onClick={handleBooking}>
@@ -274,6 +369,64 @@ const RegistrationPage = () => {
           </button>
         </div>
       </div>
+
+      {/* ===== PASSKEY CREATION MODAL ===== */}
+      {showPasskeyModal && (
+        <div className="passkey-overlay" onClick={(e) => e.target === e.currentTarget && setShowPasskeyModal(false)}>
+          <div className="passkey-modal">
+            {!passkeyCreated ? (
+              <>
+                <div className="passkey-header">
+                  <Lock size="24" color="#4A6CF7" variant="Bold" />
+                  <h3>Create Your Security Passkey</h3>
+                </div>
+                <div className="passkey-body">
+                  <p>🔐 Create a secret passkey to protect your ticket cancellations. Only you can cancel tickets with this passkey.</p>
+                  
+                  <div className="passkey-input-group">
+                    <input 
+                      type="password" 
+                      placeholder="Enter passkey (min 4 chars)" 
+                      value={passkey}
+                      onChange={(e) => { setPasskey(e.target.value); setPasskeyError(""); }}
+                      className={passkeyError ? "error" : ""}
+                      maxLength={20}
+                    />
+                  </div>
+                  <div className="passkey-input-group">
+                    <input 
+                      type="password" 
+                      placeholder="Confirm passkey" 
+                      value={confirmPasskey}
+                      onChange={(e) => { setConfirmPasskey(e.target.value); setPasskeyError(""); }}
+                      className={passkeyError ? "error" : ""}
+                      maxLength={20}
+                    />
+                  </div>
+                  {passkeyError && <span className="passkey-error">{passkeyError}</span>}
+                  <p className="passkey-hint">💡 Tip: Use something memorable but not easy to guess</p>
+                </div>
+                <div className="passkey-actions">
+              
+                  <button 
+                    className="passkey-btn passkey-btn-primary" 
+                    onClick={handleCreatePasskey}
+                    disabled={passkeyLoading}
+                  >
+                    {passkeyLoading ? "Creating..." : "Create Passkey 🔐"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="passkey-success">
+                <div className="check-icon">✓</div>
+                <h3>Passkey Created!</h3>
+                <p>Your tickets are now protected. Remember your passkey for future cancellations.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
